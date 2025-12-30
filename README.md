@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Warmane Launcher](https://i.imgur.com/your-screenshot-placeholder.png)
+![Warmane Launcher](image.png)
 
 **The next-generation launcher for the Warmane World of Warcraft private server.**
 Modern, fast, and feature-rich. Built with Electron and React.

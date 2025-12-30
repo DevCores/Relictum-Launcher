@@ -1,0 +1,13 @@
+directories:
+  output: dist
+  buildResources: build
+appId: com.warmane.launcher
+productName: Warmane Launcher
+files:
+  - filter:
+      - dist-electron/**/*
+      - dist/**/*
+      - electron/**/*
+win:
+  target: dir
+electronVersion: 28.3.3

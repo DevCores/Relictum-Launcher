@@ -35,16 +35,12 @@ export const games = [
     name: 'Burning Crusade (2.4.3)', 
     shortName: 'TBC',
     menuLabel: '2.4.3',
-    version: '2.5.2', 
+    version: '2.4.3', 
     icon: tbcLogo,
     clientIcon: tbcIco,
     cardArt: tbcArt,
     bg: 'https://images.alphacoders.com/603/603505.jpg', // TBC BG (Illidan Clean)
-    magnet: 'https://cdn.wowlibrary.com/clients/WoWClassicTBC_2.5.2_408920-multi-win.zip',
-    downloads: [
-            { label: '2.5.2', type: 'http', url: 'https://cdn.wowlibrary.com/clients/WoWClassicTBC_2.5.2_408920-multi-win.zip', version: '2.5.2' },
-            { label: '2.4.3', type: 'http', url: 'https://cdn.wowlibrary.com/clients/TBC-2.4.3.8606-enGB-Repack.zip', version: '2.4.3' }
-        ]
+    magnet: 'https://cdn.wowlibrary.com/clients/TBC-2.4.3.8606-enGB-Repack.zip'
   },
   { 
     id: 'wotlk', 

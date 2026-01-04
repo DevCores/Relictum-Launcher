@@ -1,7 +1,8 @@
 {
   "name": "warmane-launcher",
   "private": true,
-  "version": "3.0.2",
+  "version": "3.0.3",
+  "author": "Azeroth Legacy",
   "description": "Unofficial Azeroth Legacy Launcher",
   "repository": {
     "type": "git",
@@ -35,7 +36,7 @@
     "appId": "com.azerothlegacy.launcher",
     "productName": "Azeroth Legacy Launcher",
     "directories": {
-      "output": "dist_v3.0.1_final"
+      "output": "dist_v3.0.3_final"
     },
     "files": [
       "dist-electron/**/*",
@@ -44,7 +45,22 @@
     ],
     "win": {
       "target": "nsis",
-      "icon": "build/icon.ico"
+      "icon": "a.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": true,
+      "runAfterFinish": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Azeroth Legacy Launcher",
+      "installerIcon": "a.png",
+      "uninstallerIcon": "a.png",
+      "installerHeaderIcon": "a.png",
+      "installerHeader": "src/assets/azeroth_legacy_logo.png",
+      "installerSidebar": "a.png"
     }
   }
 }

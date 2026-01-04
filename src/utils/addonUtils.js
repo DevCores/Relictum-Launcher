@@ -1,11 +1,6 @@
 import localAddons from '../assets/addons.json';
 
 export const fetchWarperiaAddons = async (ipcRenderer, activeGameId, activeGameVersion) => {
-    // If TBC (2.5.2), do not fetch addons as requested
-    if (activeGameId === 'tbc' && activeGameVersion === '2.5.2') {
-        return [];
-    }
-
     const wotlkLocal = localAddons.map(a => ({ ...a, gameVersion: '3.3.5' }));
     
     try {

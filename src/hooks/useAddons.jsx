@@ -56,12 +56,6 @@ export const useAddons = ({
                 ? activeGame.downloads[selectedDownloadIndex].version 
                 : activeGame.version;
 
-            if (activeGameId === 'tbc' && selectedVersion === '2.5.2') {
-                setAllWarperiaAddons([]);
-                setLoadingAddons(false);
-                return;
-            }
-
             const fetchWarperia = async () => {
                 setLoadingAddons(true);
                 const wotlkLocal = localAddons.map(a => ({ ...a, gameVersion: '3.3.5' }));

@@ -319,6 +319,13 @@ ipcMain.handle('select-game-path', async () => {
     return (result.canceled || result.filePaths.length === 0) ? null : result.filePaths[0];
 });
 
+ipcMain.handle('select-folder', async () => {
+    const result = await dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+    return (result.canceled || result.filePaths.length === 0) ? null : result.filePaths[0];
+});
+
 ipcMain.handle('select-directory', async () => {
     const result = await dialog.showOpenDialog({
         properties: ['openDirectory']
@@ -701,7 +708,7 @@ ipcMain.handle('check-for-updates', async () => {
 
 ipcMain.handle('verify-integrity', async () => {
     // 1. In Development, we cannot verify integrity of "electron.exe" against app source hash
-    if (isDev) {
+    if (!app.isPackaged) {
         return { 
             status: 'secure', 
             message: 'Development Mode (Unverified)',

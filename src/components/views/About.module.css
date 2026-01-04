@@ -1,0 +1,287 @@
+.aboutView {
+  padding: 40px;
+  height: 100%;
+  overflow-y: auto;
+  color: #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 30px;
+  text-align: left;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.header h2 {
+  font-size: 24px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0;
+}
+
+.versionTag {
+  background: rgba(251, 191, 36, 0.1);
+  color: #fbbf24;
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.securityCard {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 25px;
+  position: relative;
+  overflow: visible;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.securityCard.secure {
+  background: rgba(6, 78, 59, 0.2);
+  border-color: #059669;
+}
+
+.securityCard.warning {
+  background: rgba(133, 77, 14, 0.2);
+  border-color: #d97706;
+}
+
+.securityCard.danger {
+  background: rgba(127, 29, 29, 0.2);
+  border-color: #dc2626;
+}
+
+.securityHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.shieldIcon {
+  color: #888;
+  transition: color 0.3s ease;
+}
+
+.securityCard.secure .shieldIcon {
+  color: #34d399;
+}
+
+.securityCard.warning .shieldIcon {
+  color: #fbbf24;
+}
+
+.securityCard.danger .shieldIcon {
+  color: #f87171;
+}
+
+.securityInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.securityTitle {
+  color: #e0e0e0;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.securityCard.secure .securityTitle {
+  color: #34d399;
+}
+
+.securityCard.warning .securityTitle {
+  color: #fbbf24;
+}
+
+.securityCard.danger .securityTitle {
+  color: #f87171;
+}
+
+.securitySubtitle {
+  color: #aaa;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.securityCard.secure .securitySubtitle {
+  color: #6ee7b7;
+}
+
+.securityCard.warning .securitySubtitle {
+  color: #fde68a;
+}
+
+.securityCard.danger .securitySubtitle {
+  color: #fca5a5;
+}
+
+.hashSection {
+  margin-bottom: 15px;
+}
+
+.hashLabel {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.securityCard.secure .hashLabel {
+  color: #6ee7b7;
+}
+
+.securityCard.warning .hashLabel {
+  color: #fde68a;
+}
+
+.securityCard.danger .hashLabel {
+  color: #fca5a5;
+}
+
+.hashCode {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  color: #ccc;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 11px;
+  padding: 10px;
+  border-radius: 4px;
+  word-break: break-all;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.securityCard.secure .hashCode {
+  color: #34d399;
+  border-color: rgba(5, 150, 105, 0.3);
+}
+
+.securityCard.warning .hashCode {
+  color: #fbbf24;
+  border-color: rgba(217, 119, 6, 0.3);
+}
+
+.securityCard.danger .hashCode {
+  color: #f87171;
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+.verifyLink {
+  background: none;
+  border: none;
+  color: #fbbf24;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.verifyLink:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.disclaimerCard {
+  width: 100%;
+  background: rgba(251, 191, 36, 0.05);
+  border-left: 4px solid #d97706;
+  padding: 20px;
+  margin-bottom: 30px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.disclaimerCard p {
+  margin: 0;
+  color: #d1d5db;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.clientList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  flex-shrink: 0;
+  padding-bottom: 40px;
+}
+
+.clientItem {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: all 0.2s;
+}
+
+.clientItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.clientIconWrapper {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.clientInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.clientInfo h4 {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.clientInfo span {
+  color: #9ca3af;
+  font-size: 13px;
+}
+
+.providerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.p2pBadge {
+  background: rgba(107, 114, 128, 0.3);
+  color: #d1d5db;
+  font-size: 10px !important;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(107, 114, 128, 0.5);
+}

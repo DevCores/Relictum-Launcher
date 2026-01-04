@@ -1,0 +1,168 @@
+import { useState, useEffect, useRef } from 'react';
+import ipcRenderer from '../utils/ipc';
+import { games } from '../config/games';
+import { playNotificationSound } from '../utils/audio';
+import azerothLogo from '../assets/azeroth_legacy_logo.png';
+
+export const useDownloader = ({ 
+    activeGameId, 
+    defaultDownloadPath, 
+    enableNotifications, 
+    enableSoundEffects,
+    savePath,
+    showModal,
+    closeModal 
+}) => {
+    const [downloadState, setDownloadState] = useState({
+        isDownloading: false,
+        gameId: null,
+        progress: 0,
+        speed: 0,
+        downloaded: 0,
+        total: 0,
+        peers: 0,
+        statusMessage: ''
+    });
+
+    const [selectedDownloadIndex, setSelectedDownloadIndex] = useState(0);
+    const downloadingGameIdRef = useRef(null);
+
+    // Reset selected download when game changes
+    useEffect(() => {
+        setSelectedDownloadIndex(0);
+    }, [activeGameId]);
+
+    // Listen for download events
+    useEffect(() => {
+        const handleDownloadProgress = (event, data) => {
+            setDownloadState(prev => ({
+                ...prev,
+                isDownloading: true,
+                ...data
+            }));
+        };
+
+        const handleDownloadStatus = (event, message) => {
+            setDownloadState(prev => ({
+                ...prev,
+                statusMessage: message
+            }));
+        };
+
+        const handleDownloadComplete = (event, { path }) => {
+            setDownloadState(prev => ({ ...prev, isDownloading: false, progress: 1, statusMessage: '' }));
+            
+            // Use the ref to get the correct game ID that started the download
+            const targetGameId = downloadingGameIdRef.current || activeGameId;
+            if (savePath) savePath(targetGameId, path);
+            downloadingGameIdRef.current = null;
+            
+            if (enableSoundEffects) {
+                playNotificationSound();
+            }
+
+            if (enableNotifications) {
+                if (Notification.permission === "granted") {
+                    new Notification('Download Complete', {
+                        body: 'World of Warcraft is ready to play!',
+                        icon: azerothLogo
+                    });
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            new Notification('Download Complete', {
+                                body: 'World of Warcraft is ready to play!',
+                                icon: azerothLogo
+                            });
+                        }
+                    });
+                }
+            }
+
+            if (showModal) {
+                showModal('Download Complete', "Download Complete! You can now play.", <button className="modal-btn-primary" onClick={closeModal}>OK</button>);
+            }
+        };
+
+        const handleDownloadCancelled = () => {
+            downloadingGameIdRef.current = null;
+            setDownloadState({
+                isDownloading: false,
+                progress: 0,
+                speed: 0,
+                downloaded: 0,
+                total: 0,
+                peers: 0,
+                statusMessage: ''
+            });
+        };
+
+        ipcRenderer.on('download-progress', handleDownloadProgress);
+        ipcRenderer.on('download-status', handleDownloadStatus);
+        ipcRenderer.on('download-complete', handleDownloadComplete);
+        ipcRenderer.on('download-cancelled', handleDownloadCancelled);
+
+        return () => {
+            if (ipcRenderer.removeListener) {
+                ipcRenderer.removeListener('download-progress', handleDownloadProgress);
+                ipcRenderer.removeListener('download-status', handleDownloadStatus);
+                ipcRenderer.removeListener('download-complete', handleDownloadComplete);
+                ipcRenderer.removeListener('download-cancelled', handleDownloadCancelled);
+            }
+        };
+    }, [activeGameId, enableNotifications, enableSoundEffects, savePath, showModal, closeModal]);
+
+    const handleDownload = async () => {
+        if (downloadState.isDownloading) {
+            if (showModal) showModal('Download in Progress', 'Please wait for the current download to finish before starting another.', <button className="modal-btn-primary" onClick={closeModal}>OK</button>);
+            return;
+        }
+        
+        try {
+            let installPath = defaultDownloadPath;
+            if (!installPath) {
+                installPath = await ipcRenderer.invoke('select-directory');
+            }
+            if (!installPath) return;
+
+            setDownloadState(prev => ({
+                ...prev,
+                isDownloading: true,
+                gameId: activeGameId
+            }));
+            
+            downloadingGameIdRef.current = activeGameId;
+
+            const activeGame = games.find(g => g.id === activeGameId);
+            const downloadSource = activeGame.downloads ? activeGame.downloads[selectedDownloadIndex].url : activeGame.magnet;
+
+            const result = await ipcRenderer.invoke('start-download', { 
+                magnetURI: downloadSource, 
+                downloadPath: installPath 
+            });
+
+            if (!result.success && result.message) {
+                setDownloadState(prev => ({ ...prev, isDownloading: false, gameId: null }));
+                downloadingGameIdRef.current = null;
+                if (showModal) showModal('Download Failed', result.message, <button className="modal-btn-primary" onClick={closeModal}>OK</button>);
+            }
+        } catch (error) {
+            setDownloadState(prev => ({ ...prev, isDownloading: false, gameId: null }));
+            downloadingGameIdRef.current = null;
+            console.error("Download error:", error);
+            if (showModal) showModal('Download Error', "Failed to start download: " + error.message, <button className="modal-btn-primary" onClick={closeModal}>OK</button>);
+        }
+    };
+
+    const handleCancelDownload = () => {
+        ipcRenderer.send('cancel-download');
+    };
+
+    return {
+        downloadState,
+        handleDownload,
+        handleCancelDownload,
+        selectedDownloadIndex,
+        setSelectedDownloadIndex
+    };
+};

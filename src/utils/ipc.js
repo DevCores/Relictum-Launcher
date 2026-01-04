@@ -1,0 +1,27 @@
+// Safe IPC import for browser compatibility
+let ipcRenderer = {
+  on: () => {},
+  send: () => {},
+  invoke: async (channel) => {
+    // Return mock data for browser preview
+    if (channel === 'get-app-version') return '3.0.0-dev';
+    if (channel === 'check-for-updates') return { updateAvailable: true, latestVersion: '1.0.1', url: '#' };
+    if (channel === 'verify-integrity') return { status: 'secure', message: 'Protected by Developer (Preview)', localHash: 'BROWSER-PREVIEW-HASH' };
+    if (channel === 'update-realmlist') return { success: true };
+    if (channel === 'read-realmlist') return { success: true, content: 'set realmlist logon.warmane.com' };
+    return null;
+  },
+  removeAllListeners: () => {},
+  removeListener: () => {}
+};
+
+try {
+  if (window.require) {
+    const electron = window.require('electron');
+    ipcRenderer = electron.ipcRenderer;
+  }
+} catch (e) {
+  console.log('Running in browser mode');
+}
+
+export default ipcRenderer;

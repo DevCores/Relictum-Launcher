@@ -1,0 +1,415 @@
+.gameView {
+  justify-content: flex-start;
+  padding-top: 60px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.gameHeader {
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  border-bottom: none;
+  width: 100%;
+  display: flex;
+  padding: 0 20px;
+}
+
+.gameArtWrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 0;
+  transition: filter 0.3s ease;
+}
+
+.gameHeaderArt {
+  max-width: 80%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+}
+
+.gameInfoActions {
+  width: 100%;
+  margin-top: 0;
+  align-items: center;
+  border-top: none;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.playSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.playButtonGroup {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.playButtonLarge {
+  height: 60px;
+  padding: 0 40px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  background: linear-gradient(180deg, var(--primary-gold) 0%, #b8934a 100%);
+  color: #1a1d24;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(205, 165, 88, 0.3);
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.playButtonLarge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(205, 165, 88, 0.5);
+  filter: brightness(1.1);
+}
+
+.playButtonLarge:active {
+  transform: translateY(1px);
+}
+
+.playButtonLarge:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.playButtonLarge.playing {
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+}
+
+.iconBtnLarge {
+  height: 60px;
+  width: 60px;
+  border-radius: 4px;
+  background: rgba(var(--primary-rgb), 0.1);
+  border: 1px solid rgba(var(--primary-rgb), 0.3);
+  color: var(--primary-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.iconBtnLarge:hover {
+  background: rgba(var(--primary-rgb), 0.2);
+  box-shadow: 0 0 15px rgba(var(--primary-rgb), 0.2);
+}
+
+.installSection {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.downloadCompactContainer {
+  width: 100%;
+  max-width: 600px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.downloadCompactHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.downloadStatusRow {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.statusText {
+  font-size: 13px;
+}
+
+.statusText.extractingMode {
+  color: #fbbf24;
+}
+
+.downloadStatsRow {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.statsText {
+  display: flex;
+  align-items: center;
+}
+
+.highlightText {
+  color: #fff;
+}
+
+.dimText {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.separator {
+  margin: 0 8px;
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.cancelIconBtn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cancelIconBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.progressBarSlim {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--primary-gold);
+  border-radius: 3px;
+  position: relative;
+  transition: width 0.2s ease;
+}
+
+.progressGlowSlim {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 10px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.installButtons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.versionSelectorContainer {
+  margin-bottom: 10px;
+}
+
+.versionOptions {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.versionOption {
+  padding: 6px 16px;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.versionOption:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.versionOption.active {
+  background: rgba(var(--primary-rgb), 0.15);
+  color: var(--primary-gold);
+}
+
+.versionNumber {
+  font-weight: 500;
+}
+
+.checkIcon {
+  color: var(--primary-gold);
+}
+
+.installButtonLarge {
+  height: 50px;
+  padding: 0 32px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: linear-gradient(180deg, var(--primary-gold) 0%, #b8934a 100%);
+  color: #1a1d24;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 15px rgba(205, 165, 88, 0.2);
+  transition: all 0.2s;
+}
+
+.installButtonLarge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(205, 165, 88, 0.4);
+  filter: brightness(1.1);
+}
+
+.installButtonLarge:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.dividerText {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+  margin: 5px 0;
+  position: relative;
+}
+
+.dividerText::before,
+.dividerText::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dividerText::before {
+  left: 0;
+}
+
+.dividerText::after {
+  right: 0;
+}
+
+.locateButton {
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: var(--text-secondary);
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.locateButton:hover {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.gameDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.detailCard {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detailCard h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.detailCard p {
+  font-size: 14px;
+  color: #fff;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pathText {
+  font-family: monospace;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+
+.removePathBtn {
+  margin-top: 5px;
+  align-self: flex-start;
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.removePathBtn:hover {
+  text-decoration: underline;
+}

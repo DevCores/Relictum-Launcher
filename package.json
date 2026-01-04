@@ -1,7 +1,7 @@
 {
-  "name": "azeroth-legacy-launcher",
+  "name": "warmane-launcher",
   "private": true,
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Unofficial Azeroth Legacy Launcher",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "appId": "com.azerothlegacy.launcher",
     "productName": "Azeroth Legacy Launcher",
     "directories": {
-      "output": "dist_v3.0.0_final"
+      "output": "dist_v3.0.1_final"
     },
     "files": [
       "dist-electron/**/*",

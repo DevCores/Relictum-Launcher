@@ -2,8 +2,8 @@ const fs = require('fs');
 const crypto = require('crypto');
 const path = require('path');
 
-const exePath = path.join(__dirname, 'dist_v3.0.0_final', 'win-unpacked', 'Azeroth Legacy Launcher.exe');
-const asarPath = path.join(__dirname, 'dist_v3.0.0_final', 'win-unpacked', 'resources', 'app.asar');
+const exePath = path.join(__dirname, 'dist_v3.0.1_final', 'win-unpacked', 'Azeroth Legacy Launcher.exe');
+const asarPath = path.join(__dirname, 'dist_v3.0.1_final', 'win-unpacked', 'resources', 'app.asar');
 
 function getHash(filePath) {
     try {

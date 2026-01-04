@@ -1,21 +1,26 @@
-* {
-  box-sizing: border-box;
+html, body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden; /* Prevent body scroll */
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--bg-dark);
   color: var(--text-primary);
   font-family: 'Segoe UI', sans-serif;
-  overflow: hidden;
   user-select: none;
 }
 
 #root {
   display: flex;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
 }
 
 /* Scrollbar */

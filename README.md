@@ -4,7 +4,7 @@
 
 ![Azeroth Legacy Launcher](https://github.com/Litas-dev/Unofficial-warmane-launcher/blob/main/public/azeroth_legacy_logo.png?raw=true)
 
-**The ultimate, secure, and modern launcher for World of Warcraft private servers.**
+**The ultimate, secure, and modern launcher for private servers.**
 *Supports 1.12.1 • 2.4.3 • 2.5.2 • 3.3.5a*
 
 [Download Latest Release](https://github.com/Litas-dev/Azeroth-Legacy-Launcher/releases) • [Report Bug](https://github.com/Litas-dev/Azeroth-Legacy-Launcher/issues)
@@ -15,13 +15,13 @@
 
 ## 📖 About
 
-The **Azeroth Legacy Launcher** is a powerful, open-source universal launcher designed to modernize your World of Warcraft experience across multiple expansions. Whether you play on **Vanilla (1.12.1)**, **The Burning Crusade (2.4.3 / 2.5.2)**, or **Wrath of the Lich King (3.3.5a)**, this launcher provides unparalleled security, automated game management, and a seamless addon ecosystem.
+The **Azeroth Legacy Launcher** is a powerful, open-source universal launcher designed to modernize your experience across multiple expansions. Whether you play on **1.12.1**, **2.4.3 / 2.5.2**, or **3.3.5a**, this launcher provides unparalleled security, automated game management, and a seamless addon ecosystem.
 
-It is the first private server launcher to feature **"Deep Core" Integrity Verification**, ensuring that your client code is authentic, safe, and unmodified from the developer's official release.
+It is the first private server launcher to feature **Advanced Integrity Verification**, ensuring that your client code is authentic, safe, and unmodified.
 
 ## ✨ Key Features
 
-### 🛡️ Deep Core Security (New in v3.0)
+### 🛡️ Security & Integrity (New in v3.0)
 *   **ASAR Code Verification**: Unlike standard launchers that only check the `.exe`, we verify the cryptographic hash of the internal `app.asar` code archive.
 *   **Real-Time Dashboard**: A dedicated security status card in the "About" section provides instant feedback (Secure/Warning/Danger).
 *   **Active Threat Monitoring**: Immediate visual alerts on the sidebar if any integrity mismatch is detected.
@@ -32,22 +32,19 @@ It is the first private server launcher to feature **"Deep Core" Integrity Verif
 *   **Smart Grouping**: Automatically groups multi-module addons into single, clean entries.
 *   **Local Management**: Easily update or delete your existing addons.
 
-### 🎥 Immersive Experience
+### � Immersive Experience
 *   **Integrated Music Player**: Enjoy the iconic soundtracks while you browse.
-*   **Cinematic Backgrounds**: Dynamic, high-quality video backgrounds that bring the launcher to life.
-*   **Classic Layout**: A refined user interface that pays homage to the original WoW launcher while using modern glass-morphism effects.
+*   **Classic Layout**: A refined user interface that pays homage to the original game launcher while using modern glass-morphism effects.
 
-### ⚡ Smart Game Installation
-*   **Multi-Version Support**: Built-in support for downloading and managing **1.12.1**, **2.4.3**, **2.5.2**, and **3.3.5a** clients.
-*   **Torrent Integration**: Built-in WebTorrent client for easy client downloads.
+### ⚡ Smart Game Management
+*   **Multi-Version Support**: Built-in support for managing **1.12.1**, **2.4.3**, **2.5.2**, and **3.3.5a** clients.
 *   **Auto-Locate**: Intelligently finds and verifies existing game installations for any supported version.
-*   **Realm Status**: Built-in monitoring for popular realms with support for custom server configuration.
 
 ## 🛠 Tech Stack
 
 *   **Core**: [Electron](https://www.electronjs.org/) (v28)
 *   **Frontend**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
-*   **Security**: SHA-256 Deep Packet Inspection
+*   **Security**: SHA-256 Integrity Verification
 *   **Styling**: CSS Modules + Modern CSS3
 *   **Icons**: [Lucide React](https://lucide.dev/)
 
@@ -86,7 +83,7 @@ It is the first private server launcher to feature **"Deep Core" Integrity Verif
     ```bash
     npm run build
     ```
-    The output executable will be in the `dist_v3.0.0_final/` directory.
+    The output executable will be in the `dist_v3.0.1_final/` directory.
 
 ## 🤝 Contributing
 
@@ -100,16 +97,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## ⚠️ Disclaimer
 
-This project is an unofficial fan creation and is not affiliated with, endorsed, sponsored, or specifically approved by Warmane or Blizzard Entertainment. World of Warcraft is a trademark of Blizzard Entertainment.
-
-## 📄 License
-
-Distributed under the MIT License. See LICENSE for more information.4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
-## ⚠️ Disclaimer
-
-This project is an unofficial fan creation and is not affiliated with, endorsed, sponsored, or specifically approved by Warmane or Blizzard Entertainment. World of Warcraft is a trademark of Blizzard Entertainment.
+This project is an unofficial fan creation and is not affiliated with, endorsed, sponsored, or specifically approved by any official game studio. All trademarks are property of their respective owners.
 
 ## 📄 License
 

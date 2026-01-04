@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Puzzle, Search, Trash2, X, Info, Download, Check, Loader2 } from 'lucide-react';
+import styles from './AddonsView.module.css';
 
 const AddonsView = ({
     activeGame,
@@ -21,7 +22,7 @@ const AddonsView = ({
 }) => {
     const [selectedAddon, setSelectedAddon] = useState(null);
 
-    if (!activeGame) return <div className="addons-view">Error: Game data not found.</div>;
+    if (!activeGame) return <div className={styles.addonsView}>Error: Game data not found.</div>;
 
     const openDetails = (addon) => {
         setSelectedAddon(addon);
@@ -40,19 +41,19 @@ const AddonsView = ({
     };
 
     return (
-        <div className="addons-view">
-            <div className="view-header">
+        <div className={styles.addonsView}>
+            <div className={styles.viewHeader}>
                 <h2>Addons Manager - {activeGame.shortName}</h2>
                 {gameInstalled && (
-                    <div className="addon-tabs">
+                    <div className={styles.addonTabs}>
                         <button 
-                            className={`tab-btn ${activeAddonTab === 'installed' ? 'active' : ''}`} 
+                            className={`${styles.tabBtn} ${activeAddonTab === 'installed' ? styles.active : ''}`} 
                             onClick={() => setActiveAddonTab('installed')}
                         >
                             Installed
                         </button>
                         <button 
-                            className={`tab-btn ${activeAddonTab === 'browse' ? 'active' : ''}`} 
+                            className={`${styles.tabBtn} ${activeAddonTab === 'browse' ? styles.active : ''}`} 
                             onClick={() => setActiveAddonTab('browse')}
                         >
                             Browse
@@ -62,82 +63,68 @@ const AddonsView = ({
             </div>
 
             {!gameInstalled ? (
-                <div className="empty-state-container" style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                    color: 'var(--text-secondary)',
-                    gap: '20px',
-                    paddingBottom: '60px'
-                }}>
-                    <div style={{
-                        background: 'rgba(251, 113, 133, 0.1)',
-                        padding: '20px',
-                        borderRadius: '50%',
-                        border: '1px solid rgba(251, 113, 133, 0.2)'
-                    }}>
+                <div className={styles.emptyStateContainer}>
+                    <div className={styles.infoIconWrapper}>
                         <Info size={48} color="#fb7185" />
                     </div>
-                    <div style={{textAlign: 'center'}}>
-                        <h3 style={{color: '#fff', marginBottom: '10px', fontSize: '18px'}}>Client Not Found</h3>
-                        <p style={{maxWidth: '400px', margin: '0 auto', lineHeight: '1.5'}}>
+                    <div className={styles.emptyStateContent}>
+                        <h3 className={styles.emptyStateTitle}>Client Not Found</h3>
+                        <p className={styles.emptyStateDesc}>
                             Please install or locate the <span style={{color: 'var(--primary-gold)'}}>{activeGame.name}</span> client to view and manage addons.
                         </p>
                     </div>
                 </div>
             ) : activeAddonTab === 'installed' ? (
-                <div className="addons-content">
-                    <div className="addons-toolbar">
+                <div className={styles.addonsContent}>
+                    <div className={styles.addonsToolbar}>
                         <button 
-                            className="primary-btn" 
+                            className={styles.primaryBtn} 
                             onClick={handleInstallAddon}
                             disabled={!gameInstalled}
                             style={{opacity: !gameInstalled ? 0.5 : 1, cursor: !gameInstalled ? 'not-allowed' : 'pointer'}}
                         >
                             <Plus size={16} /> Install from ZIP
                         </button>
-                        <span className="addon-count">{(groupedAddons || []).length} Addons</span>
+                        <span className={styles.addonCount}>{(groupedAddons || []).length} Addons</span>
                     </div>
-                    <div className="addons-list-container">
+                    <div className={styles.addonsListContainer}>
                         {loadingAddons ? (
-                            <div className="loading-state">Loading addons...</div>
+                            <div className={styles.loadingState}>Loading addons...</div>
                         ) : (groupedAddons || []).length > 0 ? (
                             (groupedAddons || []).map((addon, idx) => (
-                                <div key={idx} className="addon-row" onClick={() => openDetails(addon)}>
-                                    <div className="addon-header">
+                                <div key={idx} className={styles.addonRow} onClick={() => openDetails(addon)}>
+                                    <div className={styles.addonHeader}>
                                         {addon.image ? (
-                                            <img src={addon.image} alt={addon.title} className="addon-icon" />
+                                            <img src={addon.image} alt={addon.title} className={styles.addonIcon} />
                                         ) : (
-                                            <div className="addon-icon-placeholder">
+                                            <div className={styles.addonIconPlaceholder}>
                                                 <Puzzle size={24} />
                                             </div>
                                         )}
-                                        <div className="addon-info">
-                                            <div className="addon-name">{addon.title}</div>
+                                        <div className={styles.addonInfo}>
+                                            <div className={styles.addonName}>{addon.title}</div>
                                             {addon.author ? (
-                                                 <div className="addon-author">by {addon.author}</div>
+                                                 <div className={styles.addonAuthor}>by {addon.author}</div>
                                             ) : (
-                                                 <div className="addon-status">Installed</div>
+                                                 <div className={styles.addonStatus}>Installed</div>
                                             )}
                                         </div>
                                     </div>
                                     
                                     {addon.modules && addon.modules.length > 0 && (
-                                        <div className="addon-modules-badge">
+                                        <div className={styles.addonModulesBadge}>
                                             + {addon.modules.length} modules
                                         </div>
                                     )}
                                     
-                                    <div className="addon-actions">
-                                        <button className="view-btn-small" onClick={(e) => {
+                                    <div className={styles.addonActions}>
+                                        <button className={styles.viewBtnSmall} onClick={(e) => {
                                             e.stopPropagation();
                                             openDetails(addon);
                                         }}>
                                             <Info size={14} /> Details
                                         </button>
-                                        <button className="delete-btn-small" onClick={(e) => {
+                                        <button className={styles.deleteBtnSmall} onClick={(e) => {
                                             e.stopPropagation();
                                             const toDelete = [addon.folderName, ...(addon.modules || []).map(m => m.folderName)];
                                             handleDeleteAddon(toDelete);
@@ -148,25 +135,25 @@ const AddonsView = ({
                                 </div>
                             ))
                         ) : (
-                            <div className="empty-state">No addons found.</div>
+                            <div className={styles.emptyState}>No addons found.</div>
                         )}
                     </div>
                 </div>
             ) : (
-                <div className="addons-content">
-                     <div className="addons-toolbar">
-                        <div className="search-input-wrapper" style={{flex: 1}}>
-                            <Search size={16} className="search-icon" />
+                <div className={styles.addonsContent}>
+                     <div className={styles.addonsToolbar}>
+                        <div className={styles.searchInputWrapper}>
+                            <Search size={16} className={styles.searchIcon} />
                             <input 
                                 type="text" 
-                                className="search-input"
+                                className={styles.searchInput}
                                 placeholder="Search addons..." 
                                 value={addonSearch}
                                 onChange={(e) => setAddonSearch(e.target.value)}
                             />
                         </div>
                         <select 
-                            className="sort-select"
+                            className={styles.sortSelect}
                             value={addonSort}
                             onChange={(e) => setAddonSort(e.target.value)}
                         >
@@ -176,42 +163,34 @@ const AddonsView = ({
                             <option value="z-a">Name (Z-A)</option>
                         </select>
                     </div>
-                    <div className="addons-list-container">
+                    <div className={styles.addonsListContainer}>
                         {loadingAddons ? (
-                            <div className="loading-state">Loading addons...</div>
+                            <div className={styles.loadingState}>Loading addons...</div>
                         ) : (browseAddonsList || []).length > 0 ? (
                             (browseAddonsList || []).map((addon, idx) => (
-                                <div key={idx} className="addon-row" onClick={() => openDetails(addon)}>
-                                    <div className="addon-header">
+                                <div key={idx} className={styles.addonRow} onClick={() => openDetails(addon)}>
+                                    <div className={styles.addonHeader}>
                                         {addon.image ? (
-                                            <img src={addon.image} alt={addon.title} className="addon-icon" />
+                                            <img src={addon.image} alt={addon.title} className={styles.addonIcon} />
                                         ) : (
-                                            <div className="addon-icon-placeholder">
+                                            <div className={styles.addonIconPlaceholder}>
                                                 <Puzzle size={24} />
                                             </div>
                                         )}
-                                        <div className="addon-info">
-                                            <div className="addon-name">
+                                        <div className={styles.addonInfo}>
+                                            <div className={styles.addonName}>
                                                 {addon.title}
                                                 {addon.gameVersion && (
-                                                    <span className="version-badge" style={{
-                                                        fontSize: '10px',
-                                                        background: 'rgba(255, 255, 255, 0.1)',
-                                                        padding: '2px 6px',
-                                                        borderRadius: '4px',
-                                                        marginLeft: '8px',
-                                                        color: '#aaa',
-                                                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                                                    }}>
+                                                    <span className={styles.versionBadge}>
                                                         {addon.gameVersion}
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="addon-author">by {addon.author}</div>
+                                            <div className={styles.addonAuthor}>by {addon.author}</div>
                                         </div>
                                     </div>
-                                    <div className="addon-actions">
-                                        <button className="view-btn-small" onClick={(e) => {
+                                    <div className={styles.addonActions}>
+                                        <button className={styles.viewBtnSmall} onClick={(e) => {
                                             e.stopPropagation();
                                             openDetails(addon);
                                         }}>
@@ -219,7 +198,7 @@ const AddonsView = ({
                                         </button>
                                         {isAddonInstalled(addon) ? (
                                             <button 
-                                                className="install-btn-small installed"
+                                                className={`${styles.installBtnSmall} ${styles.installed}`}
                                                 disabled
                                             >
                                                 <Check size={14} />
@@ -227,7 +206,7 @@ const AddonsView = ({
                                             </button>
                                         ) : (
                                             <button 
-                                                className="install-btn-small"
+                                                className={styles.installBtnSmall}
                                                 disabled={!!installingAddon || !gameInstalled}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
@@ -236,7 +215,7 @@ const AddonsView = ({
                                             >
                                                 {installingAddon === addon.title ? (
                                                     <>
-                                                        <Loader2 size={14} className="spin-icon" />
+                                                        <Loader2 size={14} className={styles.spinIcon} />
                                                         Installing...
                                                     </>
                                                 ) : (
@@ -251,7 +230,7 @@ const AddonsView = ({
                                 </div>
                             ))
                         ) : (
-                            <div className="empty-state">
+                            <div className={styles.emptyState}>
                                 {activeGame.id === 'tbc' && selectedVersion === '2.5.2' && !addonSearch ? 
                                     'No addons available for 2.5.2 at the moment.' : 
                                     (addonSearch ? `No addons found matching "${addonSearch}"` : 'No addons available.')
@@ -264,21 +243,17 @@ const AddonsView = ({
 
             {/* Addon Details Modal */}
             {selectedAddon && (
-                <div className="addon-modal-overlay" onClick={closeDetails}>
-                    <div className="addon-modal" onClick={e => e.stopPropagation()}>
-                        <div className="addon-modal-header">
-                            <div className="addon-modal-title">
+                <div className={styles.addonModalOverlay} onClick={closeDetails}>
+                    <div className={styles.addonModal} onClick={e => e.stopPropagation()}>
+                        <div className={styles.addonModalHeader}>
+                            <div className={styles.addonModalTitle}>
                                 <h3>
                                     {selectedAddon.title}
                                     {selectedAddon.gameVersion && (
-                                        <span className="version-badge" style={{
+                                        <span className={styles.versionBadge} style={{
                                             fontSize: '12px',
-                                            background: 'rgba(255, 255, 255, 0.1)',
                                             padding: '4px 8px',
-                                            borderRadius: '4px',
                                             marginLeft: '10px',
-                                            color: '#aaa',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
                                             fontWeight: 'normal',
                                             verticalAlign: 'middle'
                                         }}>
@@ -286,37 +261,37 @@ const AddonsView = ({
                                         </span>
                                     )}
                                 </h3>
-                                {selectedAddon.author && <span className="addon-author">by {selectedAddon.author}</span>}
+                                {selectedAddon.author && <span className={styles.addonAuthor}>by {selectedAddon.author}</span>}
                             </div>
-                            <button className="addon-modal-close" onClick={closeDetails}>
+                            <button className={styles.addonModalClose} onClick={closeDetails}>
                                 <X size={20} />
                             </button>
                         </div>
-                        <div className="addon-modal-content">
+                        <div className={styles.addonModalContent}>
                             {selectedAddon.image && (
-                                <img src={selectedAddon.image} alt={selectedAddon.title} className="addon-modal-image" />
+                                <img src={selectedAddon.image} alt={selectedAddon.title} className={styles.addonModalImage} />
                             )}
                             
                             {selectedAddon.description && (
-                                <div className="addon-modal-desc">
+                                <div className={styles.addonModalDesc}>
                                     {selectedAddon.description}
                                 </div>
                             )}
 
                             {selectedAddon.modules && selectedAddon.modules.length > 0 && (
-                                <div className="addon-modal-modules">
+                                <div className={styles.addonModalModules}>
                                     <h4>Included Modules ({selectedAddon.modules.length})</h4>
-                                    <div className="modules-list">
+                                    <div className={styles.modulesList}>
                                         {selectedAddon.modules.map((mod, i) => (
-                                            <span key={i} className="module-tag">{mod.title || mod.folderName}</span>
+                                            <span key={i} className={styles.moduleTag}>{mod.title || mod.folderName}</span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            <div className="addon-modal-actions" style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
+                            <div className={styles.addonModalActions} style={{marginTop: '20px', display: 'flex', justifyContent: 'flex-end'}}>
                                 {activeAddonTab === 'installed' ? (
-                                    <button className="delete-btn-small" style={{padding: '10px 20px'}} onClick={() => {
+                                    <button className={styles.deleteBtnSmall} style={{padding: '10px 20px'}} onClick={() => {
                                         const toDelete = [selectedAddon.folderName, ...(selectedAddon.modules || []).map(m => m.folderName)];
                                         handleDeleteAddon(toDelete);
                                         closeDetails();
@@ -325,7 +300,7 @@ const AddonsView = ({
                                     </button>
                                 ) : isAddonInstalled(selectedAddon) ? (
                                     <button 
-                                        className="install-btn-small installed"
+                                        className={`${styles.installBtnSmall} ${styles.installed}`}
                                         disabled
                                         style={{padding: '8px 16px', fontSize: '13px'}}
                                     >
@@ -334,7 +309,7 @@ const AddonsView = ({
                                     </button>
                                 ) : (
                                     <button 
-                                        className="install-btn-small"
+                                        className={styles.installBtnSmall}
                                         style={{padding: '8px 16px', fontSize: '13px'}}
                                         disabled={!!installingAddon || !gameInstalled}
                                         onClick={() => {
@@ -346,7 +321,7 @@ const AddonsView = ({
                                     >
                                         {installingAddon === selectedAddon.title ? (
                                             <>
-                                                <Loader2 size={16} className="spin-icon" />
+                                                <Loader2 size={16} className={styles.spinIcon} />
                                                 Installing...
                                             </>
                                         ) : (

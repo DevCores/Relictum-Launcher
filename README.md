@@ -1,13 +1,14 @@
-# ⚔️ Azeroth Legacy Launcher
+# ⚔️ Relictum Launcher
 
 <div align="center">
 
-![Azeroth Legacy Launcher](https://github.com/Litas-dev/Unofficial-warmane-launcher/blob/main/public/azeroth_legacy_logo.png?raw=true)
+![Relictum Launcher](public/logo-new-white.png)
 
 **The ultimate, secure, and modern launcher for private servers.**
-*Supports 1.12.1 • 2.4.3 • 2.5.2 • 3.3.5a*
+*Supports 1.12.1 • 2.4.3 • 3.3.5a*
 
-[Download Latest Release](https://github.com/Litas-dev/Azeroth-Legacy-Launcher/releases) • [Report Bug](https://github.com/Litas-dev/Azeroth-Legacy-Launcher/issues)
+
+[Download Latest Release](https://github.com/Litas-dev/Relictum-Launcher/releases) • [Report Bug](https://github.com/Litas-dev/Relictum-Launcher/issues) • ![Downloads](https://img.shields.io/github/downloads/Litas-dev/Relictum-Launcher/total?label=Downloads&logo=github&color=blue)
 
 </div>
 
@@ -15,7 +16,7 @@
 
 ## 📖 About
 
-The **Azeroth Legacy Launcher** is a powerful, open-source universal launcher designed to modernize your experience across multiple expansions. Whether you play on **1.12.1**, **2.4.3 / 2.5.2**, or **3.3.5a**, this launcher provides unparalleled security, automated game management, and a seamless addon ecosystem.
+The **Relictum Launcher** is a powerful, open-source universal launcher designed to modernize your experience across multiple expansions. Whether you play on **1.12.1**, **2.4.3**, or **3.3.5a**, this launcher provides unparalleled security, automated game management, and a seamless addon ecosystem.
 
 It is the first private server launcher to feature **Advanced Integrity Verification**, ensuring that your client code is authentic, safe, and unmodified.
 
@@ -30,13 +31,13 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
 </div>
 <br/>
 
-### 🛡️ Security & Integrity (New in v3.0)
+### 🛡️ Security & Integrity (New in v3)
 *   **ASAR Code Verification**: Unlike standard launchers that only check the `.exe`, we verify the cryptographic hash of the internal `app.asar` code archive.
 *   **Real-Time Dashboard**: A dedicated security status card in the "About" section provides instant feedback (Secure/Warning/Danger).
 *   **Active Threat Monitoring**: Immediate visual alerts on the sidebar if any integrity mismatch is detected.
 
 ### 🧩 Next-Gen Addon Manager
-*   **Universal Browser**: Browse and install addons directly from the Warperia database.
+*   **Universal Browser**: Browse and install addons.
 *   **One-Click Install**: No more unzipping or manual folder management. Just click "Install".
 *   **Smart Grouping**: Automatically groups multi-module addons into single, clean entries.
 *   **Local Management**: Easily update or delete your existing addons.
@@ -46,7 +47,7 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
 *   **Classic Layout**: A refined user interface that pays homage to the original game launcher while using modern glass-morphism effects.
 
 ### ⚡ Smart Game Management
-*   **Multi-Version Support**: Built-in support for managing **1.12.1**, **2.4.3**, **2.5.2**, and **3.3.5a** clients.
+*   **Multi-Version Support**: Built-in support for managing **1.12.1**, **2.4.3**, and **3.3.5a** clients.
 *   **Auto-Locate**: Intelligently finds and verifies existing game installations for any supported version.
 
 ## 🛠 Tech Stack
@@ -60,8 +61,8 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
 ## 🚀 Getting Started
 
 ### For Users
-1.  Go to the [Releases](https://github.com/Litas-dev/Azeroth-Legacy-Launcher/releases) page.
-2.  Download `Azeroth.Legacy.Launcher.Setup.exe`.
+1.  Go to the [Releases](https://github.com/Litas-dev/Relictum-Launcher/releases) page.
+2.  Download `Relictum.Launcher.Setup.exe`.
 3.  Run the installer. The launcher will automatically verify its own integrity on first launch.
 
 ### For Developers
@@ -74,8 +75,8 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/Litas-dev/Azeroth-Legacy-Launcher.git
-    cd Azeroth-Legacy-Launcher
+    git clone https://github.com/Litas-dev/Relictum-Launcher.git
+    cd Relictum-Launcher
     ```
 
 2.  **Install dependencies**
@@ -92,7 +93,7 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
     ```bash
     npm run build
     ```
-    The output executable will be in the `dist_v3.0.1_final/` directory.
+    The output executable will be in the `dist_v3.1.9_final/` directory.
 
 ## 🤝 Contributing
 
@@ -116,6 +117,7 @@ Thanks for your support!
 
 This project is an unofficial fan creation and is not affiliated with, endorsed, sponsored, or specifically approved by any official game studio. All trademarks are property of their respective owners.
 
-## 📄 License
+All game names and trademarks are the property of their respective owners.
+This project is not affiliated with or endorsed by any game publisher.
 
-Distributed under the MIT License. See `LICENSE` for more information.
+License: Source-available. Personal & Internal Use Only. Redistribution, SaaS use, and derivative distribution are prohibited. See LICENSE for details.

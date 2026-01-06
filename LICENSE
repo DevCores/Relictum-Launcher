@@ -1,45 +1,61 @@
 Azeroth Legacy Launcher
-Personal & Internal Use License (P-IUL) v1.0
+Personal & Internal Use License (P-IUL) v1.1
 Copyright (c) 2026 Litas-dev
 
 1. Grant of Permission
-You are granted a worldwide, non-exclusive, non-transferable, royalty-free license
-to download, view, and use this Software for:
-  • personal use, and/or
+Subject to the terms of this License, you are granted a worldwide, non-exclusive,
+non-transferable, royalty-free license to download, view, and use the Software
+solely for:
+  • your own personal use; and/or
   • internal use within your own organization.
 
 2. Prohibited Uses
-You are NOT permitted to:
-  a) sell, rent, lease, sublicense, distribute, publish, or otherwise make the
-     Software available to any third party;
-  b) host, provide, or offer the Software as a service (including SaaS, launchers,
-     dashboards, game platforms, or similar services);
-  c) modify the Software and distribute the modified or unmodified Software;
-  d) create derivative works of the Software for redistribution or public use;
-  e) rebrand, relabel, or otherwise pass off the Software as another product.
+You are expressly prohibited from:
+  a) selling, renting, leasing, sublicensing, distributing, publishing,
+     or otherwise making the Software (or any derivative works of it)
+     available to any third party;
+  b) hosting, providing, or offering the Software as a service, including but
+     not limited to SaaS platforms, launchers, dashboards, distribution hubs,
+     or other similar services;
+  c) modifying the Software for the purpose of redistribution, or redistributing
+     either modified or unmodified versions of the Software;
+  d) creating derivative works of the Software for public or third-party use;
+  e) rebranding, relabeling, white-labeling, or otherwise passing off the
+     Software as another product;
+  f) using the Software in any manner that competes with or substitutes for
+     the original Software.
 
 3. Open Source Status
-This Software is provided as "source-available" only. It is NOT open source and
-is NOT licensed under any OSI-approved license.
+This Software is provided as "source-available". It is not “open source”
+and is not licensed under any OSI-approved license. No rights are granted
+except as explicitly stated in this License.
 
 4. Ownership
-All rights not expressly granted to you in this License are reserved by the
-copyright holder. No trademark rights are granted.
+The Software is licensed, not sold. All rights, title, and interest in and to
+the Software are and shall remain the exclusive property of the copyright
+holder. No trademark or branding rights are granted under this License.
 
 5. Disclaimer of Warranty
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+FITNESS FOR A PARTICULAR PURPOSE, TITLE, AND NON-INFRINGEMENT.
 
 6. Limitation of Liability
 IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-DEALINGS IN THE SOFTWARE.
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR
+OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE
+USE OF OR OTHER DEALINGS IN THE SOFTWARE.
 
 7. Termination
-Any breach of this License automatically terminates your rights under it.
+Any breach of this License automatically and immediately terminates all rights
+granted to you under it. Upon termination, you must cease all use and destroy
+all copies of the Software in your possession.
 
 8. Governing Law
-This License shall be governed by the laws of the jurisdiction of the copyright
-holder unless otherwise required by applicable law.
+This License shall be governed by and construed in accordance with the laws of
+the jurisdiction of the copyright holder, unless otherwise required by
+applicable law.
+
+9. Entire Agreement
+This License constitutes the entire agreement concerning the Software and
+supersedes any prior agreements or understandings, whether written or verbal.

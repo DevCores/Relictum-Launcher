@@ -90,34 +90,3 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
     ```
 
 4.  **Build for production**
-    ```bash
-    npm run build
-    ```
-    The output executable will be in the `dist_v3.1.9_final/` directory.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 💰 Support
-
-If you find this project helpful and want to support its development, you can donate via Dogecoin:
-
-**Doge:** `D8rQ9Rq2pnraaXf8PvhCPUMkYcNzsRnXLC`
-
-Thanks for your support!
-
-1.  Fork the Project
-2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the Branch (`git push origin feature/AmazingFeature`)
-5.  Open a Pull Request
-
-## ⚠️ Disclaimer
-
-This project is an unofficial fan creation and is not affiliated with, endorsed, sponsored, or specifically approved by any official game studio. All trademarks are property of their respective owners.
-
-All game names and trademarks are the property of their respective owners.
-This project is not affiliated with or endorsed by any game publisher.
-
-License: Source-available. Personal & Internal Use Only. Redistribution, SaaS use, and derivative distribution are prohibited. See LICENSE for details.

@@ -47,7 +47,7 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
 *   **Classic Layout**: A refined user interface that pays homage to the original game launcher while using modern glass-morphism effects.
 
 ### ⚡ Smart Game Management
-*   **Multi-Version Support**: Built-in support for managing **1.12.1**, **2.4.3**, **2.5.2**, and **3.3.5a** clients.
+*   **Multi-Version Support**: Built-in support for managing **1.12.1**, **2.4.3**, and **3.3.5a** clients.
 *   **Auto-Locate**: Intelligently finds and verifies existing game installations for any supported version.
 
 ## 🛠 Tech Stack

@@ -7,9 +7,7 @@ import { useLocalization } from '../../i18n/LocalizationContext';
 const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(null);
-  const [downloadProgress, setDownloadProgress] = useState(null);
-  const [downloadStatus, setDownloadStatus] = useState('');
+  const [downloads, setDownloads] = useState({}); // { clientId: { progress, status, downloading } }
   const { t } = useLocalization();
   const scrollRef = useRef(null);
   const lastScrollTop = useRef(0);
@@ -32,22 +30,43 @@ const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
     loadAvailableClients();
 
     // Listen for download progress events
-    const handleDownloadProgress = (event, progress) => {
+    const handleDownloadProgress = (event, data) => {
+      console.log('Download progress event data:', data);
+      const { clientId, ...progress } = data;
+      console.log('Extracted clientId:', clientId, 'progress:', progress);
       saveScrollPosition();
-      setDownloadProgress(progress);
+      setDownloads(prev => ({
+        ...prev,
+        [clientId]: {
+          ...prev[clientId],
+          progress,
+          downloading: true
+        }
+      }));
     };
 
-    const handleDownloadStatus = (event, status) => {
+    const handleDownloadStatus = (event, data) => {
+      const { clientId, status } = data;
+      console.log('Download status for', clientId, status);
       saveScrollPosition();
-      setDownloadStatus(status);
+      setDownloads(prev => ({
+        ...prev,
+        [clientId]: {
+          ...prev[clientId],
+          status,
+          downloading: true
+        }
+      }));
     };
 
     const handleDownloadComplete = (event, data) => {
       console.log(`Download completed for ${data.clientId}`);
       saveScrollPosition();
-      setDownloading(null);
-      setDownloadProgress(null);
-      setDownloadStatus('');
+      setDownloads(prev => {
+        const newDownloads = { ...prev };
+        delete newDownloads[data.clientId];
+        return newDownloads;
+      });
 
       // Add client to installed list
       if (onClientDownloaded) {
@@ -74,7 +93,7 @@ const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
     if (scrollRef.current && lastScrollTop.current > 0) {
       scrollRef.current.scrollTop = lastScrollTop.current;
     }
-  });
+  }, [downloads]);
 
   const loadAvailableClients = async () => {
     try {
@@ -95,14 +114,23 @@ const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
   const handleDownload = async (clientId) => {
     try {
       saveScrollPosition(); // Save scroll before state changes
-      setDownloading(clientId);
-      setDownloadProgress(null);
-      setDownloadStatus('');
+      setDownloads(prev => ({
+        ...prev,
+        [clientId]: {
+          downloading: true,
+          progress: null,
+          status: ''
+        }
+      }));
       const result = await ipcRenderer.invoke('download-client', { clientId, downloadType: 'full' });
 
       if (!result.success) {
         alert(`Download failed: ${result.message}`);
-        setDownloading(null);
+        setDownloads(prev => {
+          const newDownloads = { ...prev };
+          delete newDownloads[clientId];
+          return newDownloads;
+        });
         setDownloadProgress(null);
         setDownloadStatus('');
       }
@@ -161,15 +189,15 @@ const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
             <p className={styles.description}>{client.description}</p>
 
             <button
-              className={`${styles.downloadBtn} ${downloading === client.id ? styles.downloading : ''}`}
+              className={`${styles.downloadBtn} ${downloads[client.id]?.downloading ? styles.downloading : ''}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.currentTarget.blur(); // Remove focus to prevent scroll jumping
                 handleDownload(client.id);
               }}
-              disabled={downloading === client.id}
+              disabled={downloads[client.id]?.downloading}
             >
-              {downloading === client.id ? (
+              {downloads[client.id]?.downloading ? (
                 <>
                   <div className={styles.miniSpinner}></div>
                   {t('downloads.downloading')}
@@ -182,21 +210,29 @@ const Downloads = ({ onClientInstalled, onClientDownloaded }) => {
               )}
             </button>
 
-            {downloading === client.id && downloadProgress && (
+            {downloads[client.id]?.downloading && (
               <div className={styles.downloadProgress}>
                 <div className={styles.progressBar}>
                   <div
                     className={styles.progressFill}
-                    style={{ width: `${downloadProgress.progress * 100}%` }}
+                    style={{
+                      width: downloads[client.id]?.progress
+                        ? `${downloads[client.id].progress.progress * 100}%`
+                        : '0%'
+                    }}
                   ></div>
                 </div>
                 <div className={styles.progressText}>
-                  {downloadStatus || `Downloading... ${(downloadProgress.progress * 100).toFixed(1)}%`}
+                  {downloads[client.id]?.status || (downloads[client.id]?.progress
+                    ? `Downloading... ${(downloads[client.id].progress.progress * 100).toFixed(1)}%`
+                    : 'Preparing download...')}
                 </div>
-                <div className={styles.progressStats}>
-                  {formatBytes(downloadProgress.downloaded)} / {formatBytes(downloadProgress.total)}
-                  {downloadProgress.speed && ` • ${formatBytes(downloadProgress.speed)}/s`}
-                </div>
+                {downloads[client.id]?.progress && (
+                  <div className={styles.progressStats}>
+                    {formatBytes(downloads[client.id].progress.downloaded)} / {formatBytes(downloads[client.id].progress.total)}
+                    {downloads[client.id].progress.speed && ` • ${formatBytes(downloads[client.id].progress.speed)}/s`}
+                  </div>
+                )}
               </div>
             )}
 

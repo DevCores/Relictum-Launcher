@@ -719,7 +719,10 @@ ipcMain.handle('download-client', async (event, { clientId, downloadType = 'full
         // For demo purposes, we'll simulate the download process
         // In production, this would actually download from your server
 
-        event.sender.send('download-status', `Preparing to download ${client.name}...`);
+        event.sender.send('download-status', {
+            clientId,
+            status: `Preparing to download ${client.name}...`
+        });
 
         // Simulate download progress
         const totalSize = 2200000000; // 2.2GB
@@ -737,6 +740,7 @@ ipcMain.handle('download-client', async (event, { clientId, downloadType = 'full
             const speed = Math.random() * 1000000 + 1000000; // 1-2MB/s
 
             event.sender.send('download-progress', {
+                clientId,
                 progress,
                 speed,
                 downloaded,
@@ -744,11 +748,20 @@ ipcMain.handle('download-client', async (event, { clientId, downloadType = 'full
             });
 
             if (progress < 0.1) {
-                event.sender.send('download-status', `Preparing download...`);
+                event.sender.send('download-status', {
+                    clientId,
+                    status: `Preparing download...`
+                });
             } else if (progress < 0.9) {
-                event.sender.send('download-status', `Downloading ${client.name}...`);
+                event.sender.send('download-status', {
+                    clientId,
+                    status: `Downloading ${client.name}...`
+                });
             } else {
-                event.sender.send('download-status', `Finalizing download...`);
+                event.sender.send('download-status', {
+                    clientId,
+                    status: `Finalizing download...`
+                });
             }
         }, 500);
 

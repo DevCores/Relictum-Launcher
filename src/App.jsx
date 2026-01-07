@@ -468,28 +468,23 @@ function App() {
       >
         <div className="manage-clients-intro">{t('modals.manageClientsIntro')}</div>
         <div className="manage-clients-list">
-          {games.map(game => {
-            const isInstalled = gameLibrary.installedGameIds.includes(game.id);
-            return (
-              <div key={game.id} className="client-row">
-                <div className="client-info">
-                  <span className="client-name">{customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version}</span>
-                  <span className={`client-status ${isInstalled ? 'installed' : 'not-installed'}`}>
-                    {isInstalled ? t('modals.installed') : t('modals.notInstalled')}
-                  </span>
-                </div>
-                {isInstalled && (
-                  <button
-                    className="remove-client-btn"
-                    onClick={() => gameLibrary.removeManuallyInstalledGame(game.id)}
-                    title={t('modals.remove')}
-                  >
-                    {t('modals.remove')}
-                  </button>
-                )}
+          {games.filter(game => gameLibrary.installedGameIds.includes(game.id)).map(game => (
+            <div key={game.id} className="client-row">
+              <div className="client-info">
+                <span className="client-name">{customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version}</span>
+                <span className="client-status installed">
+                  {t('modals.installed')}
+                </span>
               </div>
-            );
-          })}
+              <button
+                className="remove-client-btn"
+                onClick={() => gameLibrary.removeManuallyInstalledGame(game.id)}
+                title={t('modals.remove')}
+              >
+                {t('modals.remove')}
+              </button>
+            </div>
+          ))}
         </div>
         <div className="manage-clients-help">
           <p>To add a client, download it from the "Game Clients" section and install it.</p>

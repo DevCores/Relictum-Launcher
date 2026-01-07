@@ -11,8 +11,13 @@
   "main": "electron/main.js",
   "scripts": {
     "dev": "concurrently -k \"vite\" \"wait-on tcp:5174 && electron .\"",
+    "dev:full": "concurrently -k \"npm run server:dev\" \"vite\" \"wait-on tcp:3001 && wait-on tcp:5174 && electron .\"",
     "build": "vite build && electron-builder",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server:dev": "cd server && npm run dev",
+    "server:start": "cd server && npm start",
+    "server:install": "cd server && npm install",
+    "db:seed": "cd server && node scripts/seed.js"
   },
   "dependencies": {
     "7zip-bin": "^5.2.0",

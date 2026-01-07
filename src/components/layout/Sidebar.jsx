@@ -46,41 +46,47 @@ const Sidebar = ({
                     <Home size={18} /> {t('menu.dashboard')}
                 </button>
                 
-                <div className={styles.navLabel}>{t('menu.clients')}</div>
-                {filteredGames.map(game => (
-                    <div 
-                        key={game.id}
-                        className={`${styles.navItem} ${activeView === 'game' && activeGameId === game.id ? styles.active : ''}`}
-                        onClick={() => {
-                            setActiveGameId(game.id);
-                            setActiveView('game');
-                        }}
-                        role="button"
-                        tabIndex={0}
+                {filteredGames.length > 0 && (
+                    <>
+                        <div className={styles.navLabel}>{t('menu.clients')}</div>
+                        {filteredGames.map(game => (
+                            <div
+                                key={game.id}
+                                className={`${styles.navItem} ${activeView === 'game' && activeGameId === game.id ? styles.active : ''}`}
+                                onClick={() => {
+                                    setActiveGameId(game.id);
+                                    setActiveView('game');
+                                }}
+                                role="button"
+                                tabIndex={0}
+                            >
+                                <Layers size={18} />
+                                <span className={styles.gameName}>
+                                    {customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version}
+                                </span>
+                                <button
+                                    className={styles.renameBtn}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onRenameGame(game.id, customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version);
+                                    }}
+                                    title="Rename"
+                                >
+                                    <Settings size={14} />
+                                </button>
+                            </div>
+                        ))}
+                    </>
+                )}
+
+                {filteredGames.length > 0 && (
+                    <button
+                        className={`${styles.navItem} ${styles.manageGamesBtn}`}
+                        onClick={onManageClients}
                     >
-                        <Layers size={18} /> 
-                        <span className={styles.gameName}>
-                            {customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version}
-                        </span>
-                        <button 
-                            className={styles.renameBtn}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onRenameGame(game.id, customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version);
-                            }}
-                            title="Rename"
-                        >
-                            <Settings size={14} />
-                        </button>
-                    </div>
-                ))}
-                
-                <button 
-                    className={`${styles.navItem} ${styles.manageGamesBtn}`}
-                    onClick={onManageClients}
-                >
-                    <Plus size={14} /> {t('menu.manageClientsBtn')}
-                </button>
+                        <Plus size={14} /> {t('menu.manageClientsBtn')}
+                    </button>
+                )}
 
                 <div className={styles.navLabel}>{t('menu.downloads')}</div>
                 <button

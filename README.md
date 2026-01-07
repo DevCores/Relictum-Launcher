@@ -79,14 +79,106 @@ It is the first private server launcher to feature **Advanced Integrity Verifica
     cd Relictum-Launcher
     ```
 
-2.  **Install dependencies**
+2.  **Setup MySQL Database**
+    ```sql
+    CREATE DATABASE relictum_launcher;
+    ```
+
+3.  **Setup Backend**
+    ```bash
+    cd server
+    npm install
+    cp env.example .env  # Configure your database credentials
+    npm run db:test      # Test database connection
+    npm run db:seed      # Populate with test data
+    cd ..
+    ```
+
+4.  **Install Frontend dependencies**
     ```bash
     npm install
     ```
 
-3.  **Run in development mode**
+5.  **Run in development mode (Frontend + Backend + Electron)**
+    ```bash
+    npm run dev:full
+    ```
+
+6.  **Run only frontend**
     ```bash
     npm run dev
     ```
 
-4.  **Build for production**
+## 🏗️ Architecture
+
+### Backend (MySQL + Express)
+- **Framework**: Node.js + Express
+- **Database**: MySQL with Sequelize ORM
+- **Authentication**: JWT tokens
+- **Real-time**: Socket.io for download progress
+- **Security**: bcrypt, rate limiting, CORS, helmet
+
+### Frontend (React + Electron)
+- **UI**: React with modern hooks
+- **Desktop**: Electron for cross-platform support
+- **Styling**: CSS Modules
+- **State**: Custom hooks for game/library management
+
+### Database Schema
+```
+users (id, username, email, password, role, profile_data)
+clients (id, client_id, name, version, files, stats)
+downloads (id, user_id, client, status, progress, timestamps)
+```
+
+### API Endpoints
+- `POST /api/auth/register` - User registration
+- `GET /api/clients` - List available clients
+- `POST /api/clients/:id/download` - Start download
+- `GET /api/users/downloads` - User download history
+
+## 🔧 Development Scripts
+
+### Frontend
+```bash
+npm run dev          # Start frontend only
+npm run build        # Build for production
+```
+
+### Backend
+```bash
+cd server
+npm run dev          # Start backend with nodemon
+npm run db:test      # Test database connection
+npm run db:seed      # Populate database with test data
+```
+
+### Full Stack
+```bash
+npm run dev:full     # Start frontend + backend + electron
+```
+
+## 📊 Database Setup
+
+### Prerequisites
+- Node.js 16+
+- MySQL 8.0+
+- Git
+
+### Database Configuration
+Create a `.env` file in the `server/` directory:
+
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=relictum_launcher
+DB_USER=root
+DB_PASSWORD=your_password
+JWT_SECRET=your-secret-key
+```
+
+### Test Accounts
+- **Admin**: admin@relictum.com / admin123
+- **User**: user@test.com / test123
+
+## 🚀 Production Build

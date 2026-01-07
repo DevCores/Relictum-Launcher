@@ -136,3 +136,4 @@ console.log('2. Run this script again to generate real manifests');
 console.log('3. Upload manifests to your server at /api/manifests/');
 console.log('4. Create and upload the actual game ZIP files');
 console.log('5. Update the URLs in electron/main.js to point to your server');
+

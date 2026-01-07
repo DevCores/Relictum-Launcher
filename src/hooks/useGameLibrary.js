@@ -45,6 +45,8 @@ export const useGameLibrary = () => {
 
     // Check installed games when gamePaths or manuallyInstalledGameIds change
     useEffect(() => {
+        console.log('useEffect triggered: gamePaths changed or manuallyInstalledGameIds changed');
+        console.log('Current manuallyInstalledGameIds:', manuallyInstalledGameIds);
         checkInstalledGames();
     }, [gamePaths, manuallyInstalledGameIds]);
 
@@ -75,68 +77,14 @@ export const useGameLibrary = () => {
     }, []);
 
     const checkInstalledGames = async () => {
-        const installed = [];
+        console.log('Checking installed games...');
+        console.log('Current manuallyInstalledGameIds:', manuallyInstalledGameIds);
 
-        for (const game of games) {
-            const gamePath = gamePaths[game.id];
-            let isInstalled = false;
+        // For downloaded clients, we simply trust manuallyInstalledGameIds
+        // In production, you might want to add integrity checks here
+        const installed = [...manuallyInstalledGameIds];
 
-            if (gamePath) {
-                // If we have a saved path, verify the game is actually installed there
-                try {
-                    const integrityCheck = await ipcRenderer.invoke('check-client-integrity', {
-                        gamePath,
-                        clientId: game.id
-                    });
-
-                    // Game is installed if files exist (valid, incomplete, or corrupted)
-                    if (integrityCheck.status !== 'missing') {
-                        isInstalled = true;
-                    } else {
-                        // Path exists but game is missing - remove invalid path
-                        const newPaths = { ...gamePaths };
-                        delete newPaths[game.id];
-                        setGamePaths(newPaths);
-                        localStorage.setItem('warmane_game_paths', JSON.stringify(newPaths));
-                    }
-                } catch (error) {
-                    console.error(`Failed to check integrity for ${game.id}:`, error);
-                    // If integrity check fails, assume game is not properly installed
-                    isInstalled = false;
-                }
-            } else {
-                // If no saved path, try to auto-detect installation
-                try {
-                    const integrityCheck = await ipcRenderer.invoke('check-client-integrity', {
-                        gamePath: null, // Will trigger auto-detection
-                        clientId: game.id
-                    });
-
-                    if (integrityCheck.status !== 'missing') {
-                        isInstalled = true;
-                        // Save the auto-detected path
-                        if (integrityCheck.installPath) {
-                            savePath(game.id, integrityCheck.installPath);
-                        }
-                    }
-                } catch (error) {
-                    // Auto-detection failed, game not found
-                    isInstalled = false;
-                }
-            }
-
-            if (isInstalled) {
-                installed.push(game.id);
-            }
-        }
-
-        // Add manually installed games (for demo/downloaded clients)
-        manuallyInstalledGameIds.forEach(gameId => {
-            if (!installed.includes(gameId)) {
-                installed.push(gameId);
-            }
-        });
-
+        console.log('Final installed games:', installed);
         setInstalledGameIds(installed);
     };
 
@@ -212,12 +160,16 @@ export const useGameLibrary = () => {
     };
 
     const addManuallyInstalledGame = (gameId) => {
-        console.log('Adding manually installed game:', gameId);
+        console.log('addManuallyInstalledGame called with:', gameId);
+        console.log('Current manuallyInstalledGameIds:', manuallyInstalledGameIds);
         if (!manuallyInstalledGameIds.includes(gameId)) {
             const newManuallyInstalled = [...manuallyInstalledGameIds, gameId];
+            console.log('New manuallyInstalledGameIds:', newManuallyInstalled);
             setManuallyInstalledGameIds(newManuallyInstalled);
             localStorage.setItem('warmane_manually_installed_games', JSON.stringify(newManuallyInstalled));
             checkInstalledGames();
+        } else {
+            console.log('Game already in manuallyInstalledGameIds, skipping');
         }
     };
 

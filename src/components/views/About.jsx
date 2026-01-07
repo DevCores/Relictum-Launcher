@@ -1,8 +1,11 @@
 import React from 'react';
 import { Shield, ExternalLink, Users, Edit, Globe, Puzzle, Trash2, Palette, Music, RefreshCw, CheckCircle } from 'lucide-react';
 import styles from './About.module.css';
+import { useLocalization } from '../../i18n/LocalizationContext';
 
 const About = ({ appVersion, integrityStatus, integrityHash }) => {
+  const { t } = useLocalization();
+
   const openLink = (url) => {
     window.open(url, '_blank');
   };
@@ -10,7 +13,7 @@ const About = ({ appVersion, integrityStatus, integrityHash }) => {
   return (
     <div className={styles.aboutView}>
       <div className={styles.header}>
-        <h2>Azeroth Legacy Launcher <span className={styles.versionTag}>v{appVersion || '3.0.1'}</span></h2>
+        <h2>{t('about.title')} <span className={styles.versionTag}>v{appVersion || '3.0.1'}</span></h2>
       </div>
 
       <div className={`${styles.securityCard} ${styles[integrityStatus] || styles.secure}`}>
@@ -18,14 +21,14 @@ const About = ({ appVersion, integrityStatus, integrityHash }) => {
           <Shield size={40} className={styles.shieldIcon} />
           <div className={styles.securityInfo}>
             <h3 className={styles.securityTitle}>
-              {integrityStatus === 'secure' ? 'Secure & Verified' : 
-               integrityStatus === 'warning' ? 'Security Warning' : 
-               'Security Risk'}
+              {integrityStatus === 'secure' ? t('about.securityTitleSecure') :
+               integrityStatus === 'warning' ? t('about.securityTitleWarning') :
+               t('about.securityTitleDanger')}
             </h3>
             <span className={styles.securitySubtitle}>
-              {integrityStatus === 'secure' ? 'Protected by Developer' : 
-               integrityStatus === 'warning' ? 'Hash Mismatch Detected' : 
-               'Integrity Compromised'}
+              {integrityStatus === 'secure' ? t('about.securitySubtitleSecure') :
+               integrityStatus === 'warning' ? t('about.securitySubtitleWarning') :
+               t('about.securitySubtitleDanger')}
             </span>
           </div>
         </div>

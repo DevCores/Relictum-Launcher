@@ -6,6 +6,8 @@ export const useGameLibrary = () => {
     const [activeGameId, setActiveGameId] = useState('wotlk');
     const [gamePaths, setGamePaths] = useState({});
     const [visibleGameIds, setVisibleGameIds] = useState(games.map(g => g.id));
+    const [installedGameIds, setInstalledGameIds] = useState([]);
+    const [manuallyInstalledGameIds, setManuallyInstalledGameIds] = useState([]);
     const [isPlaying, setIsPlaying] = useState(false);
 
     // Load visible games
@@ -28,12 +30,27 @@ export const useGameLibrary = () => {
         localStorage.setItem('warmane_visible_games', JSON.stringify(visibleGameIds));
     }, [visibleGameIds]);
 
-    // Load game paths
+    // Load game paths and manually installed games
     useEffect(() => {
         const savedPaths = localStorage.getItem('warmane_game_paths');
         if (savedPaths) {
             setGamePaths(JSON.parse(savedPaths));
         }
+
+        const savedManuallyInstalled = localStorage.getItem('warmane_manually_installed_games');
+        if (savedManuallyInstalled) {
+            setManuallyInstalledGameIds(JSON.parse(savedManuallyInstalled));
+        }
+    }, []);
+
+    // Check installed games when gamePaths or manuallyInstalledGameIds change
+    useEffect(() => {
+        checkInstalledGames();
+    }, [gamePaths, manuallyInstalledGameIds]);
+
+    // Also check on mount
+    useEffect(() => {
+        checkInstalledGames();
     }, []);
 
     // Listen for game events
@@ -57,10 +74,76 @@ export const useGameLibrary = () => {
         };
     }, []);
 
+    const checkInstalledGames = async () => {
+        const installed = [];
+
+        for (const game of games) {
+            const gamePath = gamePaths[game.id];
+            let isInstalled = false;
+
+            if (gamePath) {
+                // If we have a saved path, verify the game is actually installed there
+                try {
+                    const integrityCheck = await ipcRenderer.invoke('check-client-integrity', {
+                        gamePath,
+                        clientId: game.id
+                    });
+
+                    // Game is installed if files exist (valid, incomplete, or corrupted)
+                    if (integrityCheck.status !== 'missing') {
+                        isInstalled = true;
+                    } else {
+                        // Path exists but game is missing - remove invalid path
+                        const newPaths = { ...gamePaths };
+                        delete newPaths[game.id];
+                        setGamePaths(newPaths);
+                        localStorage.setItem('warmane_game_paths', JSON.stringify(newPaths));
+                    }
+                } catch (error) {
+                    console.error(`Failed to check integrity for ${game.id}:`, error);
+                    // If integrity check fails, assume game is not properly installed
+                    isInstalled = false;
+                }
+            } else {
+                // If no saved path, try to auto-detect installation
+                try {
+                    const integrityCheck = await ipcRenderer.invoke('check-client-integrity', {
+                        gamePath: null, // Will trigger auto-detection
+                        clientId: game.id
+                    });
+
+                    if (integrityCheck.status !== 'missing') {
+                        isInstalled = true;
+                        // Save the auto-detected path
+                        if (integrityCheck.installPath) {
+                            savePath(game.id, integrityCheck.installPath);
+                        }
+                    }
+                } catch (error) {
+                    // Auto-detection failed, game not found
+                    isInstalled = false;
+                }
+            }
+
+            if (isInstalled) {
+                installed.push(game.id);
+            }
+        }
+
+        // Add manually installed games (for demo/downloaded clients)
+        manuallyInstalledGameIds.forEach(gameId => {
+            if (!installed.includes(gameId)) {
+                installed.push(gameId);
+            }
+        });
+
+        setInstalledGameIds(installed);
+    };
+
     const toggleGameVisibility = (gameId) => {
         setVisibleGameIds(prev => {
             if (!Array.isArray(prev)) return [gameId]; // Safety fallback
-            
+
             if (prev.includes(gameId)) {
                 if (prev.length <= 1) return prev;
                 if (gameId === activeGameId) {
@@ -87,11 +170,26 @@ export const useGameLibrary = () => {
         }
     };
 
-    const handleForgetGame = () => {
+    const handleForgetGame = (gameId = activeGameId) => {
+        // Remove from real paths
         const newPaths = { ...gamePaths };
-        delete newPaths[activeGameId];
+        delete newPaths[gameId];
         setGamePaths(newPaths);
         localStorage.setItem('warmane_game_paths', JSON.stringify(newPaths));
+
+        // Remove from manually installed games
+        removeManuallyInstalledGame(gameId);
+
+        // If we removed the active game, switch to another installed game
+        if (gameId === activeGameId) {
+            const remainingInstalled = installedGameIds.filter(id => id !== gameId);
+            if (remainingInstalled.length > 0) {
+                setActiveGameId(remainingInstalled[0]);
+            } else {
+                // If no games left, switch to first available game
+                setActiveGameId(games[0]?.id || null);
+            }
+        }
     };
 
     const launchGame = async (path, { clearCache, autoClose } = {}) => {
@@ -113,10 +211,33 @@ export const useGameLibrary = () => {
         }, 1000);
     };
 
+    const addManuallyInstalledGame = (gameId) => {
+        console.log('Adding manually installed game:', gameId);
+        if (!manuallyInstalledGameIds.includes(gameId)) {
+            const newManuallyInstalled = [...manuallyInstalledGameIds, gameId];
+            setManuallyInstalledGameIds(newManuallyInstalled);
+            localStorage.setItem('warmane_manually_installed_games', JSON.stringify(newManuallyInstalled));
+            checkInstalledGames();
+        }
+    };
+
+    const removeManuallyInstalledGame = (gameId) => {
+        console.log('Removing manually installed game:', gameId);
+        const newManuallyInstalled = manuallyInstalledGameIds.filter(id => id !== gameId);
+        setManuallyInstalledGameIds(newManuallyInstalled);
+        localStorage.setItem('warmane_manually_installed_games', JSON.stringify(newManuallyInstalled));
+        checkInstalledGames();
+    };
+
+    const refreshInstalledGames = () => {
+        checkInstalledGames();
+    };
+
     return {
         activeGameId,
         setActiveGameId,
         visibleGameIds,
+        installedGameIds,
         toggleGameVisibility,
         gamePaths,
         savePath,
@@ -124,6 +245,10 @@ export const useGameLibrary = () => {
         handleForgetGame,
         launchGame,
         isPlaying,
-        setIsPlaying
+        setIsPlaying,
+        checkInstalledGames,
+        refreshInstalledGames,
+        addManuallyInstalledGame,
+        removeManuallyInstalledGame
     };
 };

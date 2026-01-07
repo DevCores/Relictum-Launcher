@@ -585,9 +585,401 @@ ipcMain.on('open-external', (event, url) => {
     shell.openExternal(url);
 });
 
+// Update server configuration
+const UPDATE_SERVER_URL = 'https://your-server.com/api'; // Замените на ваш сервер
+const UPDATE_FILES_URL = 'https://your-server.com/files'; // Базовый URL для файлов
 
+// Client configurations with file manifests
+const availableClients = [
+    {
+        id: 'classic',
+        name: 'World of Warcraft Classic',
+        version: '1.12.1',
+        size: '2.1 GB',
+        description: 'Original World of Warcraft Classic client',
+        manifestUrl: `${UPDATE_SERVER_URL}/manifests/classic.json`,
+        patchUrl: `${UPDATE_FILES_URL}/patches/classic/`,
+        fullDownloadUrl: `${UPDATE_FILES_URL}/full/classic.zip`,
+        checksum: 'example-checksum-here',
+        requiredFiles: [
+            'WoW.exe',
+            'Wow.exe', // Alternative name
+            'Launcher.exe',
+            'Data/wow-1.12.1-enUS-locale.mpq',
+            'Data/wow-1.12.1-enUS-speech.mpq',
+            'Data/wow-1.12.1-enUS-base.mpq'
+        ]
+    },
+    {
+        id: 'tbc',
+        name: 'The Burning Crusade',
+        version: '2.4.3',
+        size: '4.8 GB',
+        description: 'The Burning Crusade expansion client',
+        manifestUrl: `${UPDATE_SERVER_URL}/manifests/tbc.json`,
+        patchUrl: `${UPDATE_FILES_URL}/patches/tbc/`,
+        fullDownloadUrl: `${UPDATE_FILES_URL}/full/tbc.zip`,
+        checksum: 'example-checksum-here',
+        requiredFiles: [
+            'WoW.exe',
+            'Launcher.exe',
+            'Data/expansion-locale-enUS.MPQ',
+            'Data/expansion-speech-enUS.MPQ',
+            'Data/expansion.MPQ',
+            'Data/wow-locale-enUS.MPQ',
+            'Data/wow-speech-enUS.MPQ',
+            'Data/wow.MPQ'
+        ]
+    },
+    {
+        id: 'wotlk',
+        name: 'Wrath of the Lich King',
+        version: '3.3.5a',
+        size: '8.2 GB',
+        description: 'Wrath of the Lich King expansion client',
+        manifestUrl: `${UPDATE_SERVER_URL}/manifests/wotlk.json`,
+        patchUrl: `${UPDATE_FILES_URL}/patches/wotlk/`,
+        fullDownloadUrl: `${UPDATE_FILES_URL}/full/wotlk.zip`,
+        checksum: 'example-checksum-here',
+        requiredFiles: [
+            'WoW.exe',
+            'Launcher.exe',
+            'Data/LichKing-locale-enUS.MPQ',
+            'Data/LichKing-speech-enUS.MPQ',
+            'Data/LichKing.MPQ',
+            'Data/expansion-locale-enUS.MPQ',
+            'Data/expansion-speech-enUS.MPQ',
+            'Data/expansion.MPQ',
+            'Data/wow-locale-enUS.MPQ',
+            'Data/wow-speech-enUS.MPQ',
+            'Data/wow.MPQ'
+        ]
+    }
+];
 
+// Client management handlers
+ipcMain.handle('get-available-clients', () => {
+    return availableClients;
+});
 
+// Function to calculate file hash
+function calculateFileHash(filePath) {
+    try {
+        const fileBuffer = fs.readFileSync(filePath);
+        const hashSum = crypto.createHash('sha256');
+        hashSum.update(fileBuffer);
+        return hashSum.digest('hex');
+    } catch (error) {
+        console.error('Error calculating hash for:', filePath, error);
+        return null;
+    }
+}
+
+// Function to get all files in directory recursively
+function getAllFiles(dirPath, relativeTo = dirPath) {
+    const files = [];
+
+    function scanDirectory(currentPath) {
+        try {
+            const items = fs.readdirSync(currentPath, { withFileTypes: true });
+
+            for (const item of items) {
+                const fullPath = path.join(currentPath, item.name);
+                const relativePath = path.relative(relativeTo, fullPath);
+
+                if (item.isDirectory()) {
+                    // Skip certain directories
+                    if (!['Cache', 'WDB', 'Screenshots', 'Logs', 'Errors'].includes(item.name)) {
+                        scanDirectory(fullPath);
+                    }
+                } else if (item.isFile()) {
+                    // Only include game files, skip temp files
+                    if (!item.name.startsWith('.') &&
+                        !item.name.endsWith('.tmp') &&
+                        !item.name.endsWith('.bak')) {
+                        files.push(relativePath);
+                    }
+                }
+            }
+    } catch (error) {
+            console.error('Error scanning directory:', currentPath, error);
+        }
+    }
+
+    scanDirectory(dirPath);
+    return files;
+}
+
+// Download client through launcher (simplified for demo)
+ipcMain.handle('download-client', async (event, { clientId, downloadType = 'full' }) => {
+    try {
+        const client = availableClients.find(c => c.id === clientId);
+        if (!client) throw new Error('Client not found');
+
+        // For demo purposes, we'll simulate the download process
+        // In production, this would actually download from your server
+
+        event.sender.send('download-status', `Preparing to download ${client.name}...`);
+
+        // Simulate download progress
+        const totalSize = 2200000000; // 2.2GB
+        let downloaded = 0;
+        const interval = setInterval(() => {
+            if (downloaded >= totalSize) {
+                clearInterval(interval);
+                return;
+            }
+
+            downloaded += Math.random() * 50000000 + 10000000; // 10-60MB per update
+            if (downloaded > totalSize) downloaded = totalSize;
+
+            const progress = downloaded / totalSize;
+            const speed = Math.random() * 1000000 + 1000000; // 1-2MB/s
+
+            event.sender.send('download-progress', {
+                progress,
+                speed,
+                downloaded,
+                total: totalSize
+            });
+
+            if (progress < 0.1) {
+                event.sender.send('download-status', `Preparing download...`);
+            } else if (progress < 0.9) {
+                event.sender.send('download-status', `Downloading ${client.name}...`);
+            } else {
+                event.sender.send('download-status', `Finalizing download...`);
+            }
+        }, 500);
+
+        setTimeout(() => {
+            event.sender.send('download-complete', {
+                path: `/fake/path/${clientId}.zip`,
+                clientId
+            });
+        }, 8000); // Give enough time for progress to reach 100%
+
+        return {
+            success: true,
+            message: `Download started for ${client.name}`
+        };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+});
+
+// Client integrity and update handlers
+ipcMain.handle('check-client-integrity', async (event, { gamePath, clientId }) => {
+    try {
+        const client = availableClients.find(c => c.id === clientId);
+        if (!client) {
+            return {
+                status: 'error',
+                message: 'Client configuration not found',
+                details: []
+            };
+        }
+
+        let actualGamePath = gamePath;
+
+        // If no path provided, try to auto-detect
+        if (!actualGamePath) {
+            // Common installation paths to check
+            const commonPaths = [
+                `C:\\Games\\World of Warcraft`,
+                `C:\\Program Files\\World of Warcraft`,
+                `C:\\Program Files (x86)\\World of Warcraft`,
+                `${app.getPath('desktop')}\\World of Warcraft`,
+                `${app.getPath('documents')}\\World of Warcraft`
+            ];
+
+            for (const path of commonPaths) {
+                if (fs.existsSync(path)) {
+                    // Check if this path contains our client files
+                    const wowExe = `${path}\\WoW.exe`;
+                    const launcherExe = `${path}\\Launcher.exe`;
+
+                    if (fs.existsSync(wowExe) || fs.existsSync(launcherExe)) {
+                        actualGamePath = path;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!actualGamePath || !fs.existsSync(actualGamePath)) {
+            return {
+                status: 'missing',
+                message: 'Game installation not found',
+                details: []
+            };
+        }
+        
+        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
+        
+        event.sender.send('integrity-check-status', 'Checking client files...');
+
+        // Check required files existence
+        const missingFiles = [];
+        const corruptedFiles = [];
+        const validFiles = [];
+
+        for (const requiredFile of client.requiredFiles) {
+            const filePath = path.join(gameDir, requiredFile.replace(/\//g, path.sep));
+
+            if (!fs.existsSync(filePath)) {
+                missingFiles.push(requiredFile);
+            } else {
+                // File exists, could add hash check here
+                validFiles.push(requiredFile);
+            }
+        }
+
+        // Try to fetch manifest from server for detailed check
+        let serverManifest = null;
+        try {
+            const response = await fetch(client.manifestUrl);
+            if (response.ok) {
+                serverManifest = await response.json();
+            }
+    } catch (error) {
+            console.warn('Could not fetch server manifest:', error.message);
+        }
+
+        // If we have manifest, do detailed integrity check
+        if (serverManifest && serverManifest.files) {
+            for (const [filePath, expectedHash] of Object.entries(serverManifest.files)) {
+                const fullPath = path.join(gameDir, filePath.replace(/\//g, path.sep));
+
+                if (fs.existsSync(fullPath)) {
+                    const currentHash = calculateFileHash(fullPath);
+                    if (currentHash !== expectedHash) {
+                        corruptedFiles.push(filePath);
+                    }
+                }
+            }
+        }
+
+        // Determine overall status
+        let status = 'valid';
+        let message = 'Client files are valid';
+
+        if (missingFiles.length > 0) {
+            status = 'incomplete';
+            message = `Missing ${missingFiles.length} required files`;
+        } else if (corruptedFiles.length > 0) {
+            status = 'corrupted';
+            message = `Found ${corruptedFiles.length} corrupted files`;
+        }
+
+        return {
+            status,
+            message,
+            details: {
+                missing: missingFiles,
+                corrupted: corruptedFiles,
+                valid: validFiles.length
+            },
+            canUpdate: status !== 'valid',
+            installPath: actualGamePath
+        };
+    } catch (error) {
+        return {
+            status: 'error',
+            message: `Integrity check failed: ${error.message}`,
+            details: []
+        };
+    }
+});
+
+ipcMain.handle('update-client', async (event, { gamePath, clientId }) => {
+    try {
+        const client = availableClients.find(c => c.id === clientId);
+        if (!client) throw new Error('Client not found');
+
+        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
+
+        // First check integrity to see what needs updating
+        const integrityCheck = await ipcMain.handle('check-client-integrity', event, { gamePath, clientId });
+
+        if (integrityCheck.status === 'valid') {
+            return { success: true, message: 'Client is already up to date' };
+        }
+
+        // Start download process
+        event.sender.send('update-status', 'Starting client update...');
+
+        // For now, download full client
+        // TODO: Implement incremental patching
+        const downloadResult = await ipcMain.handle('download-client', event, {
+            clientId,
+            downloadType: 'full'
+        });
+
+        if (!downloadResult.success) {
+            throw new Error(downloadResult.message);
+        }
+
+        // Extract and install
+        event.sender.send('update-status', 'Extracting files...');
+        const extractResult = await processGameDownload(
+            downloadResult.filePath,
+            gameDir,
+            event.sender,
+            { skipExtraction: false }
+        );
+
+        if (extractResult) {
+            // Cleanup downloaded file
+            try {
+                fs.unlinkSync(downloadResult.filePath);
+            } catch (e) {
+                console.warn('Could not cleanup downloaded file:', e);
+            }
+
+            return {
+                success: true,
+                message: 'Client updated successfully',
+                newPath: extractResult
+            };
+        } else {
+            throw new Error('Extraction failed');
+        }
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+});
+
+ipcMain.handle('process-downloaded-client', async (event, { filePath, installPath, clientId }) => {
+    try {
+        const client = availableClients.find(c => c.id === clientId);
+        if (!client) throw new Error('Client configuration not found');
+
+        event.sender.send('install-status', `Installing ${client.name}...`);
+
+        // For demo purposes, simulate installation
+        // In production, this would extract the real ZIP file
+
+        setTimeout(() => {
+            event.sender.send('install-status', 'Extracting files...');
+        }, 1000);
+
+        setTimeout(() => {
+            event.sender.send('install-complete', {
+                path: installPath,
+                clientId
+            });
+        }, 3000);
+
+        return {
+            success: true,
+            message: `${client.name} installed successfully`,
+            installPath
+        };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+});
 
 // --- Discord Status ---
 
@@ -642,129 +1034,15 @@ ipcMain.handle('measure-latency', async () => {
     });
 });
 
-// --- Addon Management ---
+// --- Client Downloads ---
 
-ipcMain.handle('get-addons', async (event, gamePath) => {
-    try {
-        if (!gamePath || !fs.existsSync(gamePath)) return [];
-        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
-        const addonsPath = path.join(gameDir, 'Interface', 'AddOns');
-        
-        if (!fs.existsSync(addonsPath)) return [];
-
-        const folders = fs.readdirSync(addonsPath, { withFileTypes: true })
-            .filter(dirent => dirent.isDirectory())
-            .map(dirent => dirent.name)
-            .filter(name => !name.startsWith('Blizzard_'));
-
-        const addons = folders.map(folder => {
-            const addonPath = path.join(addonsPath, folder);
-            // Try folder name TOC first, then fallback to any .toc file
-            let tocPath = path.join(addonPath, `${folder}.toc`);
-            
-            // If specific TOC doesn't exist, try to find any .toc file
-            if (!fs.existsSync(tocPath)) {
-                const files = fs.readdirSync(addonPath);
-                const anyToc = files.find(f => f.endsWith('.toc'));
-                if (anyToc) tocPath = path.join(addonPath, anyToc);
-            }
-
-            let metadata = { id: folder, folderName: folder, title: folder, author: null, version: null };
-
-            if (fs.existsSync(tocPath)) {
-                try {
-                    const content = fs.readFileSync(tocPath, 'utf-8');
-                    // Simple regex for TOC fields
-                    const titleMatch = content.match(/## Title:\s*(.*)/);
-                    const authorMatch = content.match(/## Author:\s*(.*)/);
-                    const versionMatch = content.match(/## Version:\s*(.*)/);
-
-                    if (titleMatch) {
-                         // Remove color codes like |cffffffffName|r
-                         metadata.title = titleMatch[1].replace(/\|c[0-9a-fA-F]{8}(.*?)\|r/g, '$1').trim(); 
-                    }
-                    if (authorMatch) metadata.author = authorMatch[1].trim();
-                    if (versionMatch) metadata.version = versionMatch[1].trim();
-                } catch (e) {
-                    console.error(`Error parsing TOC for ${folder}:`, e);
-                }
-            }
-            return metadata;
-        });
-
-        return addons;
-    } catch (error) {
-        console.error('Error fetching addons:', error);
-        return [];
-    }
-});
-
-ipcMain.handle('delete-addon', async (event, { gamePath, addonNames, addonName }) => {
-    try {
-        if (!gamePath) throw new Error('No game path');
-        // Handle single string (legacy param or new singular) or array
-        let targets = [];
-        if (addonNames) {
-            targets = Array.isArray(addonNames) ? addonNames : [addonNames];
-        } else if (addonName) {
-            targets = [addonName];
-        }
-        
-        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
-        
-        let successCount = 0;
-        let errors = [];
-
-        for (const name of targets) {
-            const addonPath = path.join(gameDir, 'Interface', 'AddOns', name);
-            if (fs.existsSync(addonPath)) {
-                try {
-                    fs.rmSync(addonPath, { recursive: true, force: true });
-                    successCount++;
-                } catch (e) {
-                    errors.push(`${name}: ${e.message}`);
-                }
-            }
-        }
-
-        if (errors.length > 0) {
-            return { success: false, message: `Deleted ${successCount} addons. Errors: ${errors.join(', ')}` };
-        }
-        return { success: true };
-    } catch (error) {
-        return { success: false, message: error.message };
-    }
-});
 
 ipcMain.on('open-external', (event, url) => {
     shell.openExternal(url);
 });
 
-ipcMain.handle('select-zip-file', async () => {
-    const result = await dialog.showOpenDialog({
-        properties: ['openFile'],
-        filters: [{ name: 'Zip Files', extensions: ['zip'] }]
-    });
-    return (result.canceled || result.filePaths.length === 0) ? null : result.filePaths[0];
-});
 
-ipcMain.handle('install-addon', async (event, { gamePath, filePath }) => {
-    try {
-        if (!gamePath) throw new Error('No game path');
-        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
-        const addonsPath = path.join(gameDir, 'Interface', 'AddOns');
-        
-        if (!fs.existsSync(addonsPath)) fs.mkdirSync(addonsPath, { recursive: true });
 
-        const zip = new AdmZip(filePath);
-        zip.extractAllTo(addonsPath, true);
-        return { success: true };
-    } catch (error) {
-        return { success: false, message: error.message };
-    }
-});
-
-// --- Warperia Addons Integration ---
 
 // Helper to safely strip HTML tags (mitigates CodeQL alert)
 function stripHtml(html) {
@@ -779,156 +1057,4 @@ function stripHtml(html) {
     return html.trim();
 }
 
-ipcMain.handle('fetch-warperia-addons', async (event, expansion) => {
-    // Deprecated: Warperia scraping is disabled in favor of local/GitHub mirror data.
-    return [];
-    /*
-    try {
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        };
 
-        let url = 'https://warperia.com/wotlk-addons/';
-        if (expansion === 'tbc') {
-            url = 'https://warperia.com/tbc-addons/';
-        } else if (expansion === 'classic') {
-            url = 'https://warperia.com/vanilla-addons/';
-        }
-
-        console.log(`[Fetch] Fetching addons for ${expansion} from ${url}`);
-        const response = await fetch(url, { headers });
-        const html = await response.text();
-        
-        const addons = [];
-        // Regex to find addon cards
-        const cardRegex = /<a class="[^"]*card-addon[^"]*"[^>]*href="([^"]+)"[\s\S]*?<\/a>/g;
-        
-        let match;
-        while ((match = cardRegex.exec(html)) !== null) {
-            const detailUrl = match[1];
-            const cardHtml = match[0];
-            
-            // Extract title
-            const titleMatch = cardHtml.match(/<div class="addon-title[^"]*">([\s\S]*?)<\/div>/);
-            let title = titleMatch ? stripHtml(titleMatch[1]) : 'Unknown Addon';
-            title = title.replace(/&#8211;/g, '-').replace(/&amp;/g, '&');
-            
-            // Extract description
-            const descMatch = cardHtml.match(/<div class="[^"]*addon-short[^"]*">([\s\S]*?)<\/div>/);
-            const description = descMatch ? stripHtml(descMatch[1]) : '';
-            
-            // Extract image
-            const imgMatch = cardHtml.match(/data-src="([^"]+)"/) || cardHtml.match(/src="([^"]+)"/);
-            const image = imgMatch ? imgMatch[1] : null;
-            
-            // Determine version based on expansion
-            let gameVersion = '3.3.5';
-            if (expansion === 'tbc') gameVersion = '2.4.3';
-            if (expansion === 'classic') gameVersion = '1.12.1';
-
-            addons.push({ title, description, image, detailUrl, gameVersion });
-        }
-        
-        return addons;
-    } catch (error) {
-        console.error('Error fetching Warperia addons:', error);
-        return [];
-    }
-    */
-});
-
-ipcMain.handle('install-warperia-addon', async (event, { gamePath, detailUrl, downloadUrl, expansion }) => {
-    try {
-        console.log(`[Install] Starting installation for ${detailUrl} (Exp: ${expansion})`);
-        if (!gamePath) throw new Error('No game path provided');
-        if (!fs.existsSync(gamePath)) throw new Error(`Game path does not exist: ${gamePath}`);
-
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        };
-        
-        let targetUrl = downloadUrl;
-
-        if (!targetUrl) {
-            // 1. Fetch detail page with timeout
-            console.log(`[Install] Fetching detail page (fallback)...`);
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
-            
-            const response = await fetch(detailUrl, { headers, signal: controller.signal });
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) throw new Error(`Failed to fetch addon page: ${response.status} ${response.statusText}`);
-            
-            const html = await response.text();
-            
-            // 2. Find zip link
-            console.log(`[Install] Parsing zip link...`);
-            const zipRegex = /href="([^"]+\.zip)"/g;
-            let zipMatch;
-            
-            while ((zipMatch = zipRegex.exec(html)) !== null) {
-                const url = zipMatch[1];
-                if (!targetUrl) targetUrl = url; 
-                
-                // Prioritize expansion-specific zip if possible
-                const lowerUrl = url.toLowerCase();
-                if (expansion === 'wotlk' && lowerUrl.includes('wotlk')) {
-                    targetUrl = url;
-                    break; 
-                } else if (expansion === 'tbc' && (lowerUrl.includes('tbc') || lowerUrl.includes('2.4.3'))) {
-                    targetUrl = url;
-                    break;
-                } else if (expansion === 'classic' && (lowerUrl.includes('vanilla') || lowerUrl.includes('1.12'))) {
-                    targetUrl = url;
-                    break;
-                }
-            }
-            
-            if (!targetUrl) {
-                console.error(`[Install] No zip link found in HTML. HTML length: ${html.length}`);
-                throw new Error('No download link found for this addon');
-            }
-        }
-        
-        console.log(`[Install] Found download URL: ${targetUrl}`);
-
-        // 3. Download zip
-        const tempDir = app.getPath('temp');
-        const fileName = path.basename(targetUrl);
-        const zipPath = path.join(tempDir, fileName);
-        
-        console.log(`[Install] Downloading to ${zipPath}...`);
-        
-        const dlController = new AbortController();
-        const dlTimeoutId = setTimeout(() => dlController.abort(), 60000); // 60s timeout for download
-        
-        const zipResponse = await fetch(targetUrl, { headers, signal: dlController.signal });
-        clearTimeout(dlTimeoutId);
-        
-        if (!zipResponse.ok) throw new Error(`Failed to download zip: ${zipResponse.statusText}`);
-        
-        const buffer = await zipResponse.arrayBuffer();
-        fs.writeFileSync(zipPath, Buffer.from(buffer));
-        console.log(`[Install] Download complete. Size: ${buffer.byteLength} bytes`);
-        
-        // 4. Install
-        console.log(`[Install] Extracting...`);
-        const gameDir = fs.lstatSync(gamePath).isFile() ? path.dirname(gamePath) : gamePath;
-        const addonsPath = path.join(gameDir, 'Interface', 'AddOns');
-        
-        if (!fs.existsSync(addonsPath)) fs.mkdirSync(addonsPath, { recursive: true });
-
-        const zip = new AdmZip(zipPath);
-        zip.extractAllTo(addonsPath, true);
-        
-        // Cleanup
-        fs.unlinkSync(zipPath);
-        console.log(`[Install] Installation successful!`);
-        
-        return { success: true };
-    } catch (error) {
-        console.error('Install Warperia addon error:', error);
-        return { success: false, message: error.message };
-    }
-});

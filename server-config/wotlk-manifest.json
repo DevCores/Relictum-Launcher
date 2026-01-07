@@ -1,0 +1,25 @@
+{
+  "version": "3.3.5a",
+  "lastUpdated": "2025-01-07",
+  "files": {
+    "WoW.exe": "c3d4e5f6a1b2...",
+    "Launcher.exe": "f6a1b2c3d4e5...",
+    "Data/LichKing-locale-enUS.MPQ": "4567890abcdef123...",
+    "Data/LichKing-speech-enUS.MPQ": "def1234567890abc...",
+    "Data/LichKing.MPQ": "cba0987654321fed...",
+    "Data/expansion-locale-enUS.MPQ": "567890abcdef1234...",
+    "Data/expansion-speech-enUS.MPQ": "ef1234567890abcd...",
+    "Data/expansion.MPQ": "ba0987654321fedc...",
+    "Data/wow-locale-enUS.MPQ": "67890abcdef12345...",
+    "Data/wow-speech-enUS.MPQ": "f1234567890abcde...",
+    "Data/wow.MPQ": "a0987654321fedcb..."
+  },
+  "patches": [
+    {
+      "version": "3.3.5a",
+      "url": "https://your-server.com/patches/wotlk-3.3.5a.patch",
+      "size": 209715200,
+      "checksum": "wotlk-patch-hash-here"
+    }
+  ]
+}

@@ -1,15 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Minus, Square, X, Play, Settings as SettingsIcon, Download, Users, Globe, 
-  ChevronRight, XCircle, FolderSearch, RefreshCw, Puzzle, Trash2, Plus, 
-  ExternalLink, MessageSquare, Music, ChevronDown, FolderOpen, Check, 
-  Home, Layers, Zap, Info, Shield, AlertTriangle, CheckCircle 
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import {
+  Minus, Square, X, Play, Settings as SettingsIcon, Download, Users, Globe,
+  ChevronRight, XCircle, FolderSearch, RefreshCw, Puzzle, Trash2, Plus,
+  ExternalLink, MessageSquare, Music, ChevronDown, FolderOpen, Check,
+  Home, Layers, Zap, Info, Shield, AlertTriangle, CheckCircle
 } from 'lucide-react';
+import { LocalizationProvider } from './i18n/LocalizationContext';
+import { useLocalization } from './i18n/LocalizationContext';
 
 // Components
 import Modal from './components/Modal';
-import AddonsView from './components/AddonsView';
 import Sidebar from './components/layout/Sidebar';
+import Downloads from './components/views/Downloads';
 import TopBar from './components/layout/TopBar';
 import Dashboard from './components/views/Dashboard';
 import GameDetails from './components/views/GameDetails';
@@ -20,20 +22,20 @@ import About from './components/views/About';
 import { games } from './config/games';
 import { themes } from './config/themes';
 import ipcRenderer from './utils/ipc';
-import { fetchWarperiaAddons } from './utils/addonUtils';
 
 // Hooks
 import { useGameLibrary } from './hooks/useGameLibrary';
 import { useSettings } from './hooks/useSettings';
 import { useDownloader } from './hooks/useDownloader';
-import { useAddons } from './hooks/useAddons';
 
 // Assets
 import wotlkTheme from './assets/music/wotlk-theme.mp3';
 
 function App() {
+  const { t } = useLocalization();
+
   // UI State
-  const [activeView, setActiveView] = useState('dashboard'); // dashboard, game, addons, settings
+  const [activeView, setActiveView] = useState('dashboard'); // dashboard, game, downloads, settings, about
   const [modalConfig, setModalConfig] = useState({
     isOpen: false,
     title: '',
@@ -79,6 +81,15 @@ function App() {
   // Initialize Hooks
   const settings = useSettings();
   const gameLibrary = useGameLibrary();
+
+  // Stable callback functions to prevent re-renders
+  const handleClientDownloaded = useCallback((clientId) => {
+    gameLibrary.addManuallyInstalledGame(clientId);
+  }, [gameLibrary.addManuallyInstalledGame]);
+
+  const handleClientInstalled = useCallback(() => {
+    gameLibrary.refreshInstalledGames();
+  }, [gameLibrary.refreshInstalledGames]);
   
   const downloader = useDownloader({
     activeGameId: gameLibrary.activeGameId,
@@ -86,15 +97,6 @@ function App() {
     enableNotifications: settings.enableNotifications,
     enableSoundEffects: settings.enableSoundEffects,
     savePath: gameLibrary.savePath,
-    showModal,
-    closeModal
-  });
-
-  const addons = useAddons({
-    activeView,
-    activeGameId: gameLibrary.activeGameId,
-    gamePaths: gameLibrary.gamePaths,
-    selectedDownloadIndex: downloader.selectedDownloadIndex,
     showModal,
     closeModal
   });
@@ -287,14 +289,13 @@ function App() {
       <audio ref={audioRef} src={WOTLK_THEME_URL} loop />
 
       {/* Main Layout */}
-      <Sidebar 
+      <Sidebar
         activeView={activeView}
         setActiveView={setActiveView}
         activeGameId={gameLibrary.activeGameId}
         setActiveGameId={gameLibrary.setActiveGameId}
-        visibleGameIds={gameLibrary.visibleGameIds}
+        installedGameIds={gameLibrary.installedGameIds}
         onManageClients={toggleManageClients}
-        onOpenAddons={() => setActiveView('addons')}
         integrityStatus={integrityStatus}
         isMusicPlaying={isMusicPlaying}
         onToggleMusic={toggleMusic}
@@ -388,29 +389,15 @@ function App() {
             />
           )}
 
-          {activeView === 'addons' && (
-            <AddonsView 
-              activeGame={activeGame}
-              activeAddonTab={addons.activeAddonTab}
-              setActiveAddonTab={addons.setActiveAddonTab}
-              groupedAddons={addons.addonsList}
-              loadingAddons={addons.loadingAddons}
-              addonSearch={addons.addonSearch}
-              setAddonSearch={addons.setAddonSearch}
-              addonSort={addons.addonSort}
-              setAddonSort={addons.setAddonSort}
-              browseAddonsList={addons.browseAddonsList}
-              installingAddon={addons.installingAddon}
-              handleInstallAddon={() => { /* Manual install logic if needed */ }} 
-              handleInstallWarperiaAddon={addons.handleInstallWarperiaAddon}
-              handleDeleteAddon={addons.handleDeleteAddon}
-              selectedVersion={activeGame.version}
-              gameInstalled={!!gameLibrary.gamePaths[gameLibrary.activeGameId]}
+          {activeView === 'downloads' && (
+            <Downloads
+              onClientInstalled={handleClientInstalled}
+              onClientDownloaded={handleClientDownloaded}
             />
           )}
 
           {activeView === 'about' && (
-            <About 
+            <About
               appVersion={appVersion}
               integrityStatus={integrityStatus}
               integrityHash={integrityHash}
@@ -433,18 +420,18 @@ function App() {
       <Modal
         isOpen={realmlistConfig.isOpen}
         onClose={() => setRealmlistConfig(prev => ({ ...prev, isOpen: false }))}
-        title={`Edit Realmlist - ${activeGame.shortName}`}
+        title={`${t('modals.editRealmlist')} - ${activeGame.shortName}`}
         footer={
           <>
             <button className="modal-btn-secondary" onClick={() => setRealmlistConfig(prev => ({ ...prev, isOpen: false }))}>Cancel</button>
-            <button className="modal-btn-primary" onClick={handleSaveRealmlist}>Save Changes</button>
+            <button className="modal-btn-primary" onClick={handleSaveRealmlist}>{t('modals.save')}</button>
           </>
         }
       >
         <div className="realmlist-editor">
             <p className="realmlist-desc">
                 The realmlist file tells the game which server to connect to. 
-                For Warmane, it should be: <span className="highlight">set realmlist logon.warmane.com</span>
+                {t('modals.realmlistHint')}
             </p>
             
             <div className="quick-select">
@@ -474,28 +461,38 @@ function App() {
       <Modal
         isOpen={isManageClientsOpen}
         onClose={() => setIsManageClientsOpen(false)}
-        title="Manage Clients"
+        title={t('menu.manageClients')}
         footer={
           <button className="modal-btn-primary" onClick={() => setIsManageClientsOpen(false)}>Done</button>
         }
       >
-        <div className="manage-clients-intro">Select which expansions you want to see in the sidebar.</div>
+        <div className="manage-clients-intro">{t('modals.manageClientsIntro')}</div>
         <div className="manage-clients-list">
-          {games.map(game => (
-            <div key={game.id} className="client-row">
-              <div className="client-info">
-                <span className="client-name">{customGameNames[game.id] || game.menuLabel || game.version || game.shortName}</span>
+          {games.map(game => {
+            const isInstalled = gameLibrary.installedGameIds.includes(game.id);
+            return (
+              <div key={game.id} className="client-row">
+                <div className="client-info">
+                  <span className="client-name">{customGameNames[game.id] || t(`games.${game.id}.shortName`) || game.menuLabel || game.version}</span>
+                  <span className={`client-status ${isInstalled ? 'installed' : 'not-installed'}`}>
+                    {isInstalled ? t('modals.installed') : t('modals.notInstalled')}
+                  </span>
+                </div>
+                {isInstalled && (
+                  <button
+                    className="remove-client-btn"
+                    onClick={() => gameLibrary.removeManuallyInstalledGame(game.id)}
+                    title={t('modals.remove')}
+                  >
+                    {t('modals.remove')}
+                  </button>
+                )}
               </div>
-              <label className={`visibility-toggle ${gameLibrary.visibleGameIds?.includes?.(game.id) ? 'active' : ''}`}> 
-                <input 
-                  type="checkbox" 
-                  checked={gameLibrary.visibleGameIds?.includes?.(game.id) || false} 
-                  onChange={() => gameLibrary.toggleGameVisibility(game.id)}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-          ))}
+            );
+          })}
+        </div>
+        <div className="manage-clients-help">
+          <p>To add a client, download it from the "Game Clients" section and install it.</p>
         </div>
       </Modal>
 
@@ -503,16 +500,16 @@ function App() {
       <Modal
         isOpen={renameConfig.isOpen}
         onClose={() => setRenameConfig(prev => ({ ...prev, isOpen: false }))}
-        title="Rename Client"
+        title={t('modals.renameClient')}
         footer={
           <>
              <button className="modal-btn-secondary" onClick={handleResetName}>Reset to Default</button>
-             <button className="modal-btn-primary" onClick={handleSaveRename}>Save Name</button>
+             <button className="modal-btn-primary" onClick={handleSaveRename}>{t('modals.saveName')}</button>
           </>
         }
       >
         <div className="rename-game-form">
-           <p className="rename-desc">Enter a custom name for this client in the sidebar:</p>
+           <p className="rename-desc">{t('modals.renameDesc')}</p>
            <input 
               type="text" 
               className="modal-input"

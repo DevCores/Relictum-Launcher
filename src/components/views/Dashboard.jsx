@@ -3,8 +3,10 @@ import styles from './Dashboard.module.css';
 import { games } from '../../config/games';
 import ipcRenderer from '../../utils/ipc';
 import { Users, ExternalLink } from 'lucide-react';
+import { useLocalization } from '../../i18n/LocalizationContext';
 
 const Dashboard = ({ games, onGameSelect }) => {
+  const { t } = useLocalization();
   // Helper: Retrieve game icon from configuration
   const getGameIcon = (id) => {
     const game = games.find(g => g.id === id);
@@ -22,16 +24,17 @@ const Dashboard = ({ games, onGameSelect }) => {
   return (
     <div className={styles.dashboardView}>
       <div className={styles.heroSection}>
-        <div className={styles.heroBadge}>WELCOME TO</div>
-        <h1 className={styles.title}>AZEROTH LEGACY LAUNCHER</h1>
+        <div className={styles.heroBadge}>{t('dashboard.title')}</div>
+        <h1 className={styles.title}>{t('dashboard.subtitle')}</h1>
         <p className={styles.heroDescription}>
+          {t('dashboard.description')}<br/>
           A new experience with private servers. <br/>
           Seamlessly manage your clients, addons, and gameplay in one unified hub.
         </p>
 
         <button className={styles.communityButton} onClick={handleJoinCommunity}>
           <Users size={20} />
-          <span>Join Community</span>
+          <span>{t('dashboard.joinCommunity')}</span>
           <ExternalLink size={16} style={{ opacity: 0.7 }} />
         </button>
 

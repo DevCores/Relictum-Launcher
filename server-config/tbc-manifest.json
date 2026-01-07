@@ -1,0 +1,22 @@
+{
+  "version": "2.4.3",
+  "lastUpdated": "2025-01-07",
+  "files": {
+    "WoW.exe": "b2c3d4e5f6a1...",
+    "Launcher.exe": "e5f6a1b2c3d4...",
+    "Data/expansion-locale-enUS.MPQ": "234567890abcdef1...",
+    "Data/expansion-speech-enUS.MPQ": "bcdef1234567890a...",
+    "Data/expansion.MPQ": "edcba0987654321f...",
+    "Data/wow-locale-enUS.MPQ": "34567890abcdef12...",
+    "Data/wow-speech-enUS.MPQ": "cdef1234567890ab...",
+    "Data/wow.MPQ": "dcba0987654321fe..."
+  },
+  "patches": [
+    {
+      "version": "2.4.3",
+      "url": "https://your-server.com/patches/tbc-2.4.3.patch",
+      "size": 104857600,
+      "checksum": "tbc-patch-hash-here"
+    }
+  ]
+}

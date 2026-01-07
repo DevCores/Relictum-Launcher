@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Trash2, ChevronDown, FolderOpen, X } from 'lucide-react';
 import styles from './Settings.module.css';
 import { themes } from '../../config/themes';
+import { useLocalization } from '../../i18n/LocalizationContext';
 
 /**
  * Settings Component
@@ -28,21 +29,23 @@ const Settings = ({
   handleClearDefaultPath
 }) => {
   const [isThemeDropdownOpen, setIsThemeDropdownOpen] = useState(false);
+  const { t } = useLocalization();
 
   return (
     <div className={styles.settingsView}>
-      <h2>Settings</h2>
+      <h2>{t('settings.title')}</h2>
+
       
       <div className={styles.settingsSection}>
-        <h3>Launcher Behavior</h3>
+        <h3>{t('settings.game')}</h3>
         <div className={styles.toggleRow}>
           <div className={styles.toggleLabel}>
-            <span className={styles.toggleTitle}>Auto-close Launcher</span>
-            <span className={styles.toggleDesc}>Automatically close the launcher 2 seconds after launching the game.</span>
+            <span className={styles.toggleTitle}>{t('settings.autoCloseLauncher')}</span>
+            <span className={styles.toggleDesc}>{t('settings.autoCloseLauncher')}</span>
           </div>
           <label className={styles.toggleSwitch}>
-            <input 
-              type="checkbox" 
+            <input
+              type="checkbox"
               checked={autoCloseLauncher}
               onChange={toggleAutoClose}
             />
@@ -51,8 +54,8 @@ const Settings = ({
         </div>
         <div className={styles.toggleRow}>
           <div className={styles.toggleLabel}>
-            <span className={styles.toggleTitle}>Play Music on Startup</span>
-            <span className={styles.toggleDesc}>Automatically play theme music when the launcher starts.</span>
+            <span className={styles.toggleTitle}>{t('settings.playMusicOnStartup')}</span>
+            <span className={styles.toggleDesc}>{t('settings.playMusicOnStartup')}</span>
           </div>
           <label className={styles.toggleSwitch}>
             <input 
@@ -65,8 +68,8 @@ const Settings = ({
         </div>
         <div className={styles.toggleRow}>
            <div className={styles.toggleLabel}>
-               <span className={styles.toggleTitle}>Clear Cache on Launch</span>
-               <span className={styles.toggleDesc}>Delete WDB folder before starting game (Fixes common item/creature bugs).</span>
+            <span className={styles.toggleTitle}>{t('settings.clearCacheOnLaunch')}</span>
+            <span className={styles.toggleDesc}>{t('settings.clearCacheOnLaunch')}</span>
            </div>
            <div className={styles.cacheControlRow}>
                <button 
@@ -75,7 +78,7 @@ const Settings = ({
                    title={`Clear cache for ${activeGame ? activeGame.shortName : 'Game'}`}
                    disabled={!activeGame}
                >
-                   <Trash2 size={14} /> Clean Now
+                   <Trash2 size={14} /> {t('settings.cleanNow')}
                </button>
                <label className={styles.toggleSwitch}>
                    <input 
@@ -90,8 +93,8 @@ const Settings = ({
 
         <div className={styles.toggleRow}>
           <div className={styles.toggleLabel}>
-            <span className={styles.toggleTitle}>App Theme</span>
-            <span className={styles.toggleDesc}>Select the visual theme for the launcher.</span>
+            <span className={styles.toggleTitle}>{t('settings.theme')}</span>
+            <span className={styles.toggleDesc}>{t('settings.theme')}</span>
           </div>
           <div className={styles.themeSelectorContainer}>
             <div 
@@ -127,11 +130,11 @@ const Settings = ({
       </div>
 
       <div className={styles.settingsSection}>
-        <h3>Notifications & Sound</h3>
+        <h3>{t('settings.notifications')}</h3>
         <div className={styles.toggleRow}>
           <div className={styles.toggleLabel}>
-            <span className={styles.toggleTitle}>Desktop Notifications</span>
-            <span className={styles.toggleDesc}>Show a Windows notification when downloads complete.</span>
+            <span className={styles.toggleTitle}>{t('settings.enableNotifications')}</span>
+            <span className={styles.toggleDesc}>{t('settings.enableNotifications')}</span>
           </div>
           <label className={styles.toggleSwitch}>
             <input 
@@ -144,8 +147,8 @@ const Settings = ({
         </div>
         <div className={styles.toggleRow}>
           <div className={styles.toggleLabel}>
-            <span className={styles.toggleTitle}>Sound Effects</span>
-            <span className={styles.toggleDesc}>Play a sound when a download finishes.</span>
+            <span className={styles.toggleTitle}>{t('settings.enableSoundEffects')}</span>
+            <span className={styles.toggleDesc}>{t('settings.enableSoundEffects')}</span>
           </div>
           <label className={styles.toggleSwitch}>
             <input 
@@ -159,21 +162,21 @@ const Settings = ({
       </div>
 
        <div className={styles.settingsSection}>
-         <h3>Downloads & Installation</h3>
+         <h3>{t('settings.downloads')}</h3>
         <div className={styles.settingRow}>
           <div className={styles.settingLabel}>
-            <div className={styles.settingTitle}>Default Download Path</div>
-            <div className={styles.settingDesc}>Games will be automatically installed here.</div>
+            <div className={styles.settingTitle}>{t('settings.defaultDownloadPath')}</div>
+            <div className={styles.settingDesc}>{t('settings.defaultDownloadPath')}</div>
           </div>
           <div className={styles.settingControls}>
             <div className={styles.pathDisplay} title={defaultDownloadPath || 'Ask every time'}>
               {defaultDownloadPath || 'Ask every time'}
             </div>
-            <button className={styles.iconBtnSecondary} onClick={handleSetDefaultPath} title="Change Path">
+            <button className={styles.iconBtnSecondary} onClick={handleSetDefaultPath} title={t('settings.changePath')}>
               <FolderOpen size={16} />
             </button>
             {defaultDownloadPath && (
-              <button className={styles.iconBtnSecondary} onClick={handleClearDefaultPath} title="Clear Default Path">
+              <button className={styles.iconBtnSecondary} onClick={handleClearDefaultPath} title={t('settings.clearDefaultPath')}>
                 <X size={16} />
               </button>
             )}

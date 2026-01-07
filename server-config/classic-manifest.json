@@ -1,0 +1,19 @@
+{
+  "version": "1.12.1",
+  "lastUpdated": "2025-01-07",
+  "files": {
+    "WoW.exe": "a1b2c3d4e5f6...",
+    "Launcher.exe": "f6e5d4c3b2a1...",
+    "Data/wow-1.12.1-enUS-locale.mpq": "1234567890abcdef...",
+    "Data/wow-1.12.1-enUS-speech.mpq": "abcdef1234567890...",
+    "Data/wow-1.12.1-enUS-base.mpq": "fedcba0987654321..."
+  },
+  "patches": [
+    {
+      "version": "1.12.1",
+      "url": "https://your-server.com/patches/classic-1.12.1.patch",
+      "size": 52428800,
+      "checksum": "patch-hash-here"
+    }
+  ]
+}
